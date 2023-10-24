@@ -185,4 +185,18 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Laravel Development Server Configuration
+    |--------------------------------------------------------------------------
+    |
+    | When using the "serve" Artisan command, the development server will
+    | start on the given host and port. This value is used to determine the
+    | host and port for the application URL. You may modify this to use a
+    | custom host and port configuration instead of using the defaults.
+    |
+    */
+    'host' => env('APP_HOST', '0.0.0.0'), // Change '127.0.0.1' to '0.0.0.0'
+    'port' => env('APP_PORT', 8000),
+
 ];
