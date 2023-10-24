@@ -16,3 +16,13 @@ services:
       - ./nginx-config:/etc/nginx/conf.d # Mount a directory for custom Nginx configuration
     depends_on:
       - app
+  db:
+    image: mysql:8.1
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: 'database'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    ports:
+      - 3306:3306
