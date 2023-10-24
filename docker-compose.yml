@@ -5,12 +5,14 @@ services:
     volumes:
       - ./laravel:/app
     working_dir: /app
-    command: php artisan serve
+    command: php artisan serve --host=0.0.0.0 --port=8000 # Update the host and port as needed
+
   web:
     image: nginx:alpine
     ports:
       - "80:80"
     volumes:
       - ./laravel:/app
+      - ./nginx-config:/etc/nginx/conf.d # Mount a directory for custom Nginx configuration
     depends_on:
       - app
