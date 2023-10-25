@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MemberController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//It seems that if I don't need authentication, I just simply add my route. MemberController can be imported automatically.
+
+Route::apiResource('members', MemberController::class);

@@ -246,3 +246,63 @@ You can verify that the data has been created in your database by querying the `
    ```
 
    This will display all the information of the members in the `members` table.
+
+## Creating API endpoint to view members
+
+1. Create a Controller:
+
+   ```bash
+   php artisan make:controller MemberController
+   ```
+
+   This will create a `MemberController.php` file in the `app/Http/Controllers` directory.
+
+2. Create a Route in the `routes/api.php` file:
+
+   ```php
+   //It seems that if I don't need authentication, I just simply add my route. MemberController can be imported automatically.
+
+    Route::apiResource('members', MemberController::class);
+   ```
+
+3. Implement the `show` Method in the `\app\Http\MemberController`
+   ```php
+    <?php
+
+    namespace App\Http\Controllers;
+
+    use App\Models\Member;
+    use Exception;
+    use Illuminate\Http\Request;
+    use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+    use Illuminate\Http\Resources\Json\JsonResource;
+    use Symfony\Component\HttpFoundation\Response;
+
+    class MemberController extends Controller
+    {
+       public function index(): AnonymousResourceCollection
+        {
+            return JsonResource::collection(Member::all());
+       }
+
+       public function show(string $id): JsonResource|Response
+       {
+           try{
+               return new JsonResource(Member::findOrFail($id));
+           } catch (Exception) {
+               return response(null, Response::HTTP_NOT_FOUND);
+           }
+       }
+    }
+
+   ```
+
+5. Testing the API Endpoint:
+   Type it in the browser:
+
+   http://localhost/api/members/1
+
+
+   Or for all the data:
+
+   http://localhost/api/members
