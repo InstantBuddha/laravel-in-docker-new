@@ -306,3 +306,120 @@ You can verify that the data has been created in your database by querying the `
    Or for all the data:
 
    http://localhost/api/members
+
+## Adding new members
+
+1. Create StoreMemberRequest.php in \app\Http\Requests\
+   ```bash
+   php artisan make:request StoreMemberRequest
+   ```
+   And modify it so that it looks like this (later regexp needs to be added):
+
+   ```php
+    <?php
+
+    namespace App\Http\Requests;
+
+    use Illuminate\Foundation\Http\FormRequest;
+
+    class StoreMemberRequest extends FormRequest
+    {
+        /**
+         * Determine if the user is authorized to make this request.
+         */
+        public function authorize(): bool
+        {   
+            return true;    //supposedly this needs to be true instead
+        }
+
+        /**
+         * Get the validation rules that apply to the request.
+         *
+         * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+         */
+        public function rules(): array
+        {
+            return [
+                'name' => ['required', 'string', 'min:3'],
+                'email' => ['required', 'email'],
+               'phone_number' => ['required', 'string'],
+                'zipcode' => ['string'],
+                'city' => ['string'],
+                'address' => ['string'],
+                'comment' => ['string'],
+                'mailinglist' => ['required', 'boolean'],
+            ];
+        }
+    }
+
+   ```
+2. Implement the method in the MemberController
+
+    Now MemberController.php looks like this, although it would be a good idea to add feedback if the action was successful or not.
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreMemberRequest;
+use App\Models\Member;
+use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Symfony\Component\HttpFoundation\Response;
+
+class MemberController extends Controller
+{
+    public function index(): AnonymousResourceCollection
+    {
+        return JsonResource::collection(Member::all());
+    }
+
+    public function show(string $id): JsonResource|Response
+    {
+        try{
+            return new JsonResource(Member::findOrFail($id));
+        } catch (Exception) {
+            return response(null, Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function store(StoreMemberRequest $request): JsonResource
+    {
+        $member = Member::create($request->all());
+        return new JsonResource($member);
+    }
+}
+
+```
+
+3. Define the route
+
+    I suppose it is not necessary as it was universally defined
+
+4. Trying it out
+
+    I am going to use the following POST request in Postman:
+
+    ```
+    http://localhost/api/members?name=John&email=john@example.com&phone_number=123456789&mailinglist=0&city=Lake Maritza
+
+    ```
+   
+   The following header needed to be added:
+   ```JSON
+   {"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+   ]}
+   ```

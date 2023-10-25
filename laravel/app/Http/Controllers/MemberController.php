@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMemberRequest;
 use App\Models\Member;
 use Exception;
 use Illuminate\Http\Request;
@@ -23,5 +24,11 @@ class MemberController extends Controller
         } catch (Exception) {
             return response(null, Response::HTTP_NOT_FOUND);
         }
+    }
+
+    public function store(StoreMemberRequest $request): JsonResource
+    {
+        $member = Member::create($request->all());
+        return new JsonResource($member);
     }
 }
