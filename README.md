@@ -423,3 +423,42 @@ class MemberController extends Controller
 					}
    ]}
    ```
+
+## Volume problem
+
+After closing down everything, the mysql information disappeared and when trying to connect, I encountered a could not find driver error
+
+HEre is what I did:
+Added a volume to the mysql
+
+and then:
+
+In a terminal (let's call it laravelTerminal):
+```bash
+docker exec -it laravel-in-docker-new-app-1 bash
+docker-php-ext-install pdo pdo_mysql
+php artisan migrate
+```
+
+In an other terminal (call it dbTerminal):
+
+```bash
+docker exec -it laravel-in-docker-new-db-1 bash
+mysql -u root -p
+SHOW DATABASES;
+USE database;
+SHOW TABLES;
+SELECT * FROM members;
+```
+
+Then in laravelTerminal:
+```bash
+php artisan db:seed --class=MemberSeeder
+```
+
+in dbTerminal the seeded members can be checked:
+```bash
+SELECT * FROM members;
+```
+
+With this the database information became persistent, but I could not solve the missing driver error. Maybe the pdo_mysql should be installed during build?
