@@ -22,13 +22,13 @@ class StoreMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'min:3'],
+            'name' => ['required', 'string', 'regex:/^(?=[\p{L}. -]{5,30}$)(?!(?:.*[.-]){2})\p{L}.*\p{L}[.\p{L} -]*$/u'],
             'email' => ['required', 'email'],
-            'phone_number' => ['required', 'string'],
-            'zipcode' => ['string'],
-            'city' => ['string'],
-            'address' => ['string'],
-            'comment' => ['string'],
+            'phone_number' => ['required', 'string', 'regex:/^\d{10,16}$/'],
+            'zipcode' => ['string', 'regex:/^[A-Za-z0-9 -]{4,10}$/'],
+            'city' => ['string', 'regex:/^[\p{L}'.'\s-]{2,20}$/u'],
+            'address' => ['string', 'regex:/^(?=.*\p{L})[a-zA-Z0-9\p{L}'.',\/\s-]{5,40}$/u'],
+            'comment' => ['string', 'regex:/^[0-9\p{L}.,:!?\s]{5,100}$/u'],
             'mailinglist' => ['required', 'boolean'],
         ];
     }
