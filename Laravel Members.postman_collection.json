@@ -1,0 +1,169 @@
+{
+	"info": {
+		"_postman_id": "574e6e9c-9281-4da8-bb7e-2fd25fc26c30",
+		"name": "Laravel Members",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14315231"
+	},
+	"item": [
+		{
+			"name": "POST add basic info only",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": "text",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "text",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/api/members?name=Jack Jones&email=jack@example.com&phone_number=123456789&mailinglist=0&city=CityCityx",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"members"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Jack Jones"
+						},
+						{
+							"key": "email",
+							"value": "jack@example.com"
+						},
+						{
+							"key": "phone_number",
+							"value": "123456789"
+						},
+						{
+							"key": "mailinglist",
+							"value": "0"
+						},
+						{
+							"key": "city",
+							"value": "CityCityx"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST add all info",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": "text",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "text",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/api/members?name=Jack Jude&email=joed@example.com&phone_number=0123456789&zipcode=1199&city=CityCityx&address=8690 Raegan Inlet Apt&comment=Ipsam aspernatur possimus voluptatem voluptates laboriosam aut. Exercitationem velit eos sequi.&mailinglist=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"members"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Jack Jude"
+						},
+						{
+							"key": "email",
+							"value": "joed@example.com"
+						},
+						{
+							"key": "phone_number",
+							"value": "0123456789"
+						},
+						{
+							"key": "zipcode",
+							"value": "1199"
+						},
+						{
+							"key": "city",
+							"value": "CityCityx"
+						},
+						{
+							"key": "address",
+							"value": "8690 Raegan Inlet Apt"
+						},
+						{
+							"key": "comment",
+							"value": "Ipsam aspernatur possimus voluptatem voluptates laboriosam aut. Exercitationem velit eos sequi."
+						},
+						{
+							"key": "mailinglist",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET all members",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/api/members",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"members"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET one member",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/api/members/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"members",
+						"2"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
