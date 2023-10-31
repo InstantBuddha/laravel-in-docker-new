@@ -505,3 +505,61 @@ class StoreMemberRequest extends FormRequest
 }
 
 ```
+
+## Create tests
+
+First bash in and create MemberTest:
+
+```bash
+docker exec -it laravel-in-docker-new-app-1 bash
+php artisan make:test MemberTest
+```
+
+Check what I need to test:
+In app\Http\Controllers there is MemberController that has three functions:
+- index()
+- show(string $id)
+- store(StoreMemberRequest $request)
+We can write test cases for these.
+
+Then write the test cases:
+MemberTest.php looks like this after wtiting the index testcase:
+
+```php
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Member;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+
+class MemberTest extends TestCase
+{
+    private const BASE_ENDPOINT = '/api/members/';
+
+    public function testMember_index(): void
+    {
+        $members = Member::factory()->count(3)->create();
+        $memberIds = $members->map(fn(Member $member) => $member->id)->toArray();
+        echo 'Member IDs: ' . json_encode($memberIds) . PHP_EOL;
+        $response = $this->get(self::BASE_ENDPOINT)->json('data');
+        //$this->assertCount($members->count(), $response); //for empty database
+        if (count($response) > 3) { //for a database with existing entries
+            $response = array_slice($response, -3, null, true);
+        }
+        foreach ($response as $responseMember) {
+            $this->assertContains($responseMember['id'], $memberIds);
+        }
+    }
+    
+}
+
+```
+
+Then run the test:
+
+```bash
+php artisan test
+```

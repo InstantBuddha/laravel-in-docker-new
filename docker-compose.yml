@@ -20,7 +20,7 @@ services:
       - app
   db:
     image: mysql:8.1
-    environment:
+    environment:  # the env_file: setting did not work
       MYSQL_ROOT_PASSWORD: 'password'
       MYSQL_ROOT_HOST: '%'
       MYSQL_DATABASE: 'database'

@@ -24,7 +24,7 @@ class StoreMemberRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'regex:/^(?=[\p{L}. -]{5,30}$)(?!(?:.*[.-]){2})\p{L}.*\p{L}[.\p{L} -]*$/u'],
             'email' => ['required', 'email'],
-            'phone_number' => ['required', 'string', 'regex:/^\d{10,16}$/'],
+            'phone_number' => ['required', 'string', 'min:7', 'max:20', 'regex:/^[+]?\d*([ ()-]\d*)*$/'],
             'zipcode' => ['string', 'regex:/^[A-Za-z0-9 -]{4,10}$/'],
             'city' => ['string', 'regex:/^[\p{L}'.'\s-]{2,20}$/u'],
             'address' => ['string', 'regex:/^(?=.*\p{L})[a-zA-Z0-9\p{L}'.',\/\s-]{5,40}$/u'],
