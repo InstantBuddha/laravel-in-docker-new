@@ -531,7 +531,7 @@ MemberTest.php looks like this after wtiting the index testcase:
 namespace Tests\Feature;
 
 use App\Models\Member;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;  //megnézni
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
