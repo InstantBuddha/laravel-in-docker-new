@@ -10,8 +10,8 @@ class StoreMemberRequest extends FormRequest
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
-    {   
-        return true;    //supposedly this needs to be true instead
+    {
+        return true; //supposedly this needs to be true instead
     }
 
     /**
@@ -22,13 +22,13 @@ class StoreMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'regex:/^(?=[\p{L}. -]{5,30}$)(?!(?:.*[.-]){2})\p{L}.*\p{L}[.\p{L} -]*$/u'],
-            'email' => ['required', 'email'],
-            'phone_number' => ['required', 'string', 'min:7', 'max:20', 'regex:/^[+]?\d*([ ()-]\d*)*$/'],
-            'zipcode' => ['string', 'regex:/^[A-Za-z0-9 -]{4,10}$/'],
-            'city' => ['string', 'regex:/^[\p{L}'.'\s-]{2,20}$/u'],
-            'address' => ['string', 'regex:/^(?=.*\p{L})[a-zA-Z0-9\p{L}'.',\/\s-]{5,40}$/u'],
-            'comment' => ['string', 'regex:/^[0-9\p{L}.,:!?\s]{5,100}$/u'],
+            'name' => ['required', 'string', 'min:8'],
+            'email' => ['required', 'email', 'min:8'],
+            'phone_number' => ['required', 'string', 'min:7', 'max:20'],
+            'zipcode' => ['string', 'max:15'],
+            'city' => ['string', 'max:30'],
+            'address' => ['string', 'max:50'],
+            'comment' => ['string', 'max:250'],
             'mailinglist' => ['required', 'boolean'],
         ];
     }

@@ -463,9 +463,9 @@ SELECT * FROM members;
 
 The problem was solved by creating a Dockerfile and adding docker-php-ext-install pdo pdo_mysql during build.
 
-## Adding regular expressions to StoreMemberRequest
+## Adding some rules to StoreMemberRequest
 
-Some regular expressions from frontend were faulty. Here is the finished file:
+I removed the regular expressions as they were not needed:
 
 ```php
 <?php
@@ -480,8 +480,8 @@ class StoreMemberRequest extends FormRequest
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
-    {   
-        return true;    //supposedly this needs to be true instead
+    {
+        return true; //supposedly this needs to be true instead
     }
 
     /**
@@ -492,18 +492,17 @@ class StoreMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'regex:/^(?=[\p{L}. -]{5,30}$)(?!(?:.*[.-]){2})\p{L}.*\p{L}[.\p{L} -]*$/u'],
-            'email' => ['required', 'email'],
-            'phone_number' => ['required', 'string', 'regex:/^\d{10,16}$/'],
-            'zipcode' => ['string', 'regex:/^[A-Za-z0-9 -]{4,10}$/'],
-            'city' => ['string', 'regex:/^[\p{L}'.'\s-]{2,20}$/u'],
-            'address' => ['string', 'regex:/^(?=.*\p{L})[a-zA-Z0-9\p{L}'.',\/\s-]{5,40}$/u'],
-            'comment' => ['string', 'regex:/^[0-9\p{L}.,:!?\s]{5,100}$/u'],
+            'name' => ['required', 'string', 'min:8'],
+            'email' => ['required', 'email', 'min:8'],
+            'phone_number' => ['required', 'string', 'min:7', 'max:20'],
+            'zipcode' => ['string', 'max:15'],
+            'city' => ['string', 'max:30'],
+            'address' => ['string', 'max:50'],
+            'comment' => ['string', 'max:250'],
             'mailinglist' => ['required', 'boolean'],
         ];
     }
 }
-
 ```
 
 ## Create tests
@@ -531,19 +530,20 @@ MemberTest.php looks like this after wtiting the index testcase:
 namespace Tests\Feature;
 
 use App\Models\Member;
-use Illuminate\Foundation\Testing\RefreshDatabase;  //megnézni
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+//use Illuminate\Foundation\Testing\RefreshDatabase;    //This would reset the database, so if entries were present when testing, they would be lost.
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class MemberTest extends TestCase
 {
+    use DatabaseTransactions;   // creates the entries for testing, but removes them after that. The manually added entries will have a higher ID because auto increment will leave out the IDs of deleted test entries
     private const BASE_ENDPOINT = '/api/members/';
 
     public function testMember_index(): void
     {
         $members = Member::factory()->count(3)->create();
         $memberIds = $members->map(fn(Member $member) => $member->id)->toArray();
-        echo 'Member IDs: ' . json_encode($memberIds) . PHP_EOL;
         $response = $this->get(self::BASE_ENDPOINT)->json('data');
         //$this->assertCount($members->count(), $response); //for empty database
         if (count($response) > 3) { //for a database with existing entries
@@ -554,6 +554,36 @@ class MemberTest extends TestCase
         }
     }
     
+    public function testMember_store(): void 
+    {
+        $member = Member::factory()->make();
+        $response = $this->post(self::BASE_ENDPOINT, $member->toArray())->json('data');
+        $this->assertNotNull($response['id']);
+        $this->assertEquals($member->name, $response['name']);
+        $this->assertEquals($member->email, $response['email']); 
+        $this->assertEquals($member->phone_number, $response['phone_number']);
+    }
+
+    public function testMember_show(): void
+    {
+        $member = Member::factory()->count(3)->create()->random();
+        $response = $this->get(self::BASE_ENDPOINT . $member->id)->json('data');
+        $this->assertEquals($member->id, $response['id']); 
+        $this->assertEquals($member->name, $response['name']);
+        $this->assertEquals($member->email, $response['email']);
+        $this->assertEquals($member->phone_number, $response['phone_number']);
+    }
+    
+    
+    /**
+     * A basic feature test example.
+     */
+    public function test_example(): void
+    {
+        $response = $this->get('/');
+
+        $response->assertStatus(200);
+    }
 }
 
 ```
@@ -563,3 +593,5 @@ Then run the test:
 ```bash
 php artisan test
 ```
+
+With use DatabaseTransactions; it does not delete the existing data.
