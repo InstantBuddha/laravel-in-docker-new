@@ -26,8 +26,8 @@ class StoreMemberRequest extends FormRequest
             'email' => ['required', 'email', 'min:8'],
             'phone_number' => ['required', 'string', 'min:7', 'max:20'],
             'zipcode' => ['string', 'max:15'],
-            'city' => ['string', 'max:30'],
-            'address' => ['string', 'max:50'],
+            'city' => ['string', 'max:40'],
+            'address' => ['string', 'max:80'],
             'comment' => ['string', 'max:250'],
             'mailinglist' => ['required', 'boolean'],
         ];
