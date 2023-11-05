@@ -542,14 +542,13 @@ MemberTest.php looks like this after wtiting the index testcase:
 namespace Tests\Feature;
 
 use App\Models\Member;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-//use Illuminate\Foundation\Testing\RefreshDatabase;    //This would reset the database, so if entries were present when testing, they would be lost.
+use Illuminate\Foundation\Testing\RefreshDatabase;    //This would reset the database, so if entries were present when testing, they would be lost.
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class MemberTest extends TestCase
 {
-    use DatabaseTransactions;   // creates the entries for testing, but removes them after that. The manually added entries will have a higher ID because auto increment will leave out the IDs of deleted test entries
+    use RefreshDatabase;
     private const BASE_ENDPOINT = '/api/members/';
 
     public function testMember_index(): void
@@ -557,10 +556,8 @@ class MemberTest extends TestCase
         $members = Member::factory()->count(3)->create();
         $memberIds = $members->map(fn(Member $member) => $member->id)->toArray();
         $response = $this->get(self::BASE_ENDPOINT)->json('data');
-        //$this->assertCount($members->count(), $response); //for empty database
-        if (count($response) > 3) { //for a database with existing entries
-            $response = array_slice($response, -3, null, true);
-        }
+        $this->assertCount($members->count(), $response); //for empty database
+        
         foreach ($response as $responseMember) {
             $this->assertContains($responseMember['id'], $memberIds);
         }

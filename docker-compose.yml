@@ -24,10 +24,10 @@ services:
     image: mysql:8.1
     container_name: laravel-in-docker-new-db-1
     environment:
-      MYSQL_ROOT_PASSWORD: "password"
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ROOT_HOST: "%"
-      MYSQL_DATABASE: "database"
-      MYSQL_PASSWORD: "password"
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
       MYSQL_ALLOW_EMPTY_PASSWORD: 0
     volumes:
       - db-data:/var/lib/mysql
