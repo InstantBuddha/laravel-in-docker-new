@@ -1,5 +1,17 @@
 # laravel-in-docker-new
 
+- [laravel-in-docker-new](#laravel-in-docker-new)
+  - [Setup](#setup)
+  - [Migration](#migration)
+  - [Create a Factory](#create-a-factory)
+  - [Create a Model:](#create-a-model)
+  - [Create a Seeder:](#create-a-seeder)
+  - [Verification of created data](#verification-of-created-data)
+  - [Creating API endpoint to view members](#creating-api-endpoint-to-view-members)
+  - [Adding new members](#adding-new-members)
+  - [Volume problem](#volume-problem)
+  - [Adding some rules to StoreMemberRequest](#adding-some-rules-to-storememberrequest)
+  - [Create tests](#create-tests)
 
 ## Setup
 

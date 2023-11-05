@@ -4,22 +4,25 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    container_name: laravel-in-docker-new-app-1
     working_dir: /app
     volumes:
-      - ./laravel:/app
+      - .:/app
     ports:
       - "8000:8000" #
   web:
     image: nginx:alpine
+    container_name: laravel-in-docker-new-web-1
     ports:
       - "80:80"
     volumes:
-      - ./laravel:/app
+      - .:/app
       - ./nginx-config:/etc/nginx/conf.d # Mount a directory for custom Nginx configuration
     depends_on:
       - app
   db:
     image: mysql:8.1
+    container_name: laravel-in-docker-new-db-1
     environment:
       MYSQL_ROOT_PASSWORD: "password"
       MYSQL_ROOT_HOST: "%"
