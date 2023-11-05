@@ -20,12 +20,12 @@ services:
       - app
   db:
     image: mysql:8.1
-    environment: # the env_file: setting did not work
+    environment:
       MYSQL_ROOT_PASSWORD: "password"
       MYSQL_ROOT_HOST: "%"
       MYSQL_DATABASE: "database"
       MYSQL_PASSWORD: "password"
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1 # check this
+      MYSQL_ALLOW_EMPTY_PASSWORD: 0
     volumes:
       - db-data:/var/lib/mysql
     ports:
