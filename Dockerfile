@@ -1,9 +1,6 @@
-FROM composer:2.6.5
+FROM php:8.2-fpm-alpine
 
 WORKDIR /app
-
-# Copy the Laravel application files into the container
-COPY . /app
 
 RUN docker-php-ext-install pdo pdo_mysql
 

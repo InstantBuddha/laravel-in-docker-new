@@ -18,8 +18,8 @@
 Enginx can be reached through http://localhost and not the original ip mentioned. However, this can be changed in \laravel\config\app.php
 
 I added MySQL extension:
-```bash
-docker exec -it laravel-in-docker-new-app-1 bash
+```sh
+docker exec -it laravel-in-docker-new-app-1 sh
 docker-php-ext-install pdo pdo_mysql
 ```
 
@@ -27,13 +27,13 @@ docker-php-ext-install pdo pdo_mysql
 ## Migration
 
 AND after that I could run
-```bash
-docker exec -it laravel-in-docker-new-app-1 bash
+```sh
+docker exec -it laravel-in-docker-new-app-1 sh
 php artisan migrate
 ```
 
-After that in bash:
-```bash
+After that in sh:
+```sh
 php artisan make:migration create_members_table
 ```
 
@@ -80,7 +80,7 @@ return new class extends Migration
 
 AND then:
 
-```bash
+```sh
    php artisan migrate
 ```
 ## Create a Factory
@@ -89,7 +89,7 @@ AND then:
 
 Create a Factory (If I had done it after creating a model, it would have been easier)
 
-```bash
+```sh
 php artisan make:factory MemberFactory --model=Member
 ```
 
@@ -135,7 +135,7 @@ class MemberFactory extends Factory
 
 ## Create a Model:
 
-```bash
+```sh
 php artisan make:model Member
 ```
 
@@ -170,7 +170,7 @@ class Member extends Model
 
 ## Create a Seeder:
 
-```bash
+```sh
 php artisan make:seeder MemberSeeder
 ```
 
@@ -200,7 +200,7 @@ class MemberSeeder extends Seeder
 
 defined the seeder and then
 
-```bash
+```sh
 php artisan db:seed --class=MemberSeeder
 ```
 
@@ -211,7 +211,7 @@ You can verify that the data has been created in your database by querying the `
 1. **Using Tinker (Laravel's REPL):**
    You can use Laravel's Tinker to interact with your application from the command line. Open your terminal and run:
 
-   ```bash
+   ```sh
    php artisan tinker
    ```
 
@@ -263,7 +263,7 @@ You can verify that the data has been created in your database by querying the `
 
 1. Create a Controller:
 
-   ```bash
+   ```sh
    php artisan make:controller MemberController
    ```
 
@@ -322,7 +322,7 @@ You can verify that the data has been created in your database by querying the `
 ## Adding new members
 
 1. Create StoreMemberRequest.php in \app\Http\Requests\
-   ```bash
+   ```sh
    php artisan make:request StoreMemberRequest
    ```
    And modify it so that it looks like this (later regexp needs to be added):
@@ -446,8 +446,8 @@ Added a volume to the mysql
 and then:
 
 In a terminal (let's call it laravelTerminal):
-```bash
-docker exec -it laravel-in-docker-new-app-1 bash
+```sh
+docker exec -it laravel-in-docker-new-app-1 sh
 docker-php-ext-install pdo pdo_mysql
 php artisan migrate
 ```
@@ -464,7 +464,7 @@ SELECT * FROM members;
 ```
 
 Then in laravelTerminal:
-```bash
+```sh
 php artisan db:seed --class=MemberSeeder
 ```
 
@@ -521,8 +521,8 @@ class StoreMemberRequest extends FormRequest
 
 First bash in and create MemberTest:
 
-```bash
-docker exec -it laravel-in-docker-new-app-1 bash
+```sh
+docker exec -it laravel-in-docker-new-app-1 sh
 php artisan make:test MemberTest
 ```
 
@@ -599,7 +599,7 @@ class MemberTest extends TestCase
 
 Then run the test:
 
-```bash
+```sh
 php artisan test
 ```
 

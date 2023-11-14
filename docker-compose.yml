@@ -9,7 +9,10 @@ services:
     volumes:
       - .:/app
     ports:
-      - "8000:8000" #
+      - "8000:8000"
+    depends_on:
+      - web
+      - db  
   web:
     image: nginx:alpine
     container_name: laravel-in-docker-new-web-1
@@ -18,8 +21,6 @@ services:
     volumes:
       - .:/app
       - ./nginx-config:/etc/nginx/conf.d # Mount a directory for custom Nginx configuration
-    depends_on:
-      - app
   db:
     image: mysql:8.1
     container_name: laravel-in-docker-new-db-1
