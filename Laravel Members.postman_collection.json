@@ -25,7 +25,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost/api/members?name=Jack Jones&email=jack@example.com&phone_number=123456789&mailinglist=0&city=CityCityx",
+					"raw": "http://localhost/api/members?name=Jack Jones&email=jack@example.com&phone_number=123456789&mailing_list=0&city=CityCityx",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -48,7 +48,7 @@
 							"value": "123456789"
 						},
 						{
-							"key": "mailinglist",
+							"key": "mailing_list",
 							"value": "0"
 						},
 						{
@@ -79,7 +79,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost/api/members?name=Jack Jude&email=joed@example.com&phone_number=0123456789&zipcode=1199&city=CityCityx&address=8690 Raegan Inlet Apt&comment=Ipsam aspernatur possimus voluptatem voluptates laboriosam aut. Exercitationem velit eos sequi.&mailinglist=0",
+					"raw": "http://localhost/api/members?name=Jack Jude&email=joed@example.com&phone_number=0123456789&zipcode=1199&city=CityCityx&address=8690 Raegan Inlet Apt&comment=Ipsam aspernatur possimus voluptatem voluptates laboriosam aut. Exercitationem velit eos sequi.&mailing_list=0",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -118,7 +118,7 @@
 							"value": "Ipsam aspernatur possimus voluptatem voluptates laboriosam aut. Exercitationem velit eos sequi."
 						},
 						{
-							"key": "mailinglist",
+							"key": "mailing_list",
 							"value": "0"
 						}
 					]

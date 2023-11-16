@@ -27,7 +27,7 @@ class MemberFactory extends Factory
             'city' => fake()->city,
             'address' => fake()->address,
             'comment' => fake()->text,
-            'mailinglist' => fake()->boolean,
+            'mailing_list' => fake()->boolean,
             'email_verified_at' => now(),
     ];
     }

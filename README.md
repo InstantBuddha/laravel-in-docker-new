@@ -62,7 +62,7 @@ return new class extends Migration
         $table->string('city')->nullable(); 
         $table->text('address')->nullable();
         $table->text('comment')->nullable(); 
-        $table->boolean('mailinglist')->nullable(); 
+        $table->boolean('mailing_list')->nullable(); 
         $table->timestamp('email_verified_at')->nullable();
         $table->timestamps();
         });
@@ -125,7 +125,7 @@ class MemberFactory extends Factory
             'city' => fake()->city,
             'address' => fake()->address,
             'comment' => fake()->text,
-            'mailinglist' => fake()->boolean,
+            'mailing_list' => fake()->boolean,
             'email_verified_at' => now(),
     ];
     }
@@ -161,7 +161,7 @@ class Member extends Model
         'city',
         'address',
         'comment',
-        'mailinglist',
+        'mailing_list',
         'email_verified_at',
     ];
 }
@@ -359,7 +359,7 @@ You can verify that the data has been created in your database by querying the `
                 'city' => ['string'],
                 'address' => ['string'],
                 'comment' => ['string'],
-                'mailinglist' => ['required', 'boolean'],
+                'mailing_list' => ['required', 'boolean'],
             ];
         }
     }
@@ -416,7 +416,7 @@ class MemberController extends Controller
     I am going to use the following POST request in Postman:
 
     ```
-    http://localhost/api/members?name=John&email=john@example.com&phone_number=123456789&mailinglist=0&city=Lake Maritza
+    http://localhost/api/members?name=John&email=john@example.com&phone_number=123456789&mailing_list=0&city=Lake Maritza
 
     ```
    
@@ -511,7 +511,7 @@ class StoreMemberRequest extends FormRequest
             'city' => ['string', 'max:30'],
             'address' => ['string', 'max:50'],
             'comment' => ['string', 'max:250'],
-            'mailinglist' => ['required', 'boolean'],
+            'mailing_list' => ['required', 'boolean'],
         ];
     }
 }

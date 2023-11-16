@@ -20,7 +20,7 @@ return new class extends Migration
         $table->string('city')->nullable(); 
         $table->text('address')->nullable();
         $table->text('comment')->nullable(); 
-        $table->boolean('mailinglist')->nullable(); 
+        $table->boolean('mailing_list')->nullable(); 
         $table->timestamp('email_verified_at')->nullable();
         $table->timestamps();
         });

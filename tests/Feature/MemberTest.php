@@ -28,13 +28,13 @@ class MemberTest extends TestCase
 
     public function testMember_store(): void
     {
-        $member = Member::factory()->make();
+        $member = Member::factory()->make();    //a create tárolná is : eloquent működésére utánanézni ehhez: pont jó ez a teszt, itt pont rossz lenne, ha ccreate lenne
         $response = $this->post(self::BASE_ENDPOINT, $member->toArray())->json('data');
-        $this->assertNotNull($response['id']);
+        $this->assertNotNull($response['id']);  //legyen ez is inkább equals
         $this->assertEquals($member->name, $response['name']); // might be unnecessary or moved to a separate function to make the code more elegant
         $this->assertEquals($member->email, $response['email']); // might be unnecessary or moved to a separate function to make the code more elegant
         $this->assertEquals($member->phone_number, $response['phone_number']); // might be unnecessary or moved to a separate function to make the code more elegant
-    }
+    }   //teszteknél nem baj ha van ismétlődés
 
     public function testMember_show(): void
     {

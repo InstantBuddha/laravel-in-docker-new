@@ -19,7 +19,7 @@ class Member extends Model
         'city',
         'address',
         'comment',
-        'mailinglist',
+        'mailing_list',
         'email_verified_at',
     ];
 }

@@ -6,14 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMemberRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true; //supposedly this needs to be true instead
-    }
-
+    
     /**
      * Get the validation rules that apply to the request.
      *
@@ -29,7 +22,7 @@ class StoreMemberRequest extends FormRequest
             'city' => ['string', 'max:40'],
             'address' => ['string', 'max:80'],
             'comment' => ['string', 'max:250'],
-            'mailinglist' => ['required', 'boolean'],
+            'mailing_list' => ['required', 'boolean'],
         ];
     }
 }
