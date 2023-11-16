@@ -1,5 +1,6 @@
 <?php
 
+use App\Mail\WelcomeEmail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,4 +21,10 @@ Route::get('/', function () {
 
 Route::get('/greeting', function () {
     return 'Hello World';
+});
+
+Route::get('/testemail', function () {
+    $name = 'John Doe';
+    $phone_number= '0036701234567';
+    Mail::to('testreceiver@example.com')->send(new WelcomeEmail($name, $phone_number));
 });

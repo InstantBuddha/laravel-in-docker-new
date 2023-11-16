@@ -12,6 +12,9 @@
   - [Volume problem](#volume-problem)
   - [Adding some rules to StoreMemberRequest](#adding-some-rules-to-storememberrequest)
   - [Create tests](#create-tests)
+  - [Emails: Make:mail](#emails-makemail)
+      - [Undo the Mistaken Action:](#undo-the-mistaken-action)
+    - [Creating the envelope](#creating-the-envelope)
 
 ## Setup
 
@@ -604,3 +607,56 @@ php artisan test
 ```
 
 With use DatabaseTransactions; it does not delete the existing data.
+
+## Emails: Make:mail
+
+In the laravel app, create the
+
+```sh
+docker exec -it laravel-in-docker-new-app-1 sh
+php artisan make:mail WelcomeEmail --markdown=emails.welcome
+```
+
+This created WelcomeEmail.php in the app\Mail folder
+
+If you've accidentally created a mail class without the `--markdown` option and want to correct it, you can follow these steps to undo the first action and create a markdown email:
+
+#### Undo the Mistaken Action:
+
+1. **Delete the Incorrect Mail Class:**
+   - Delete the mail class that was created without the `--markdown` option. The mail class is typically located in the `App\Mail` directory. For example:
+     ```bash
+     rm app/Mail/WelcomeEmail.php
+     ```
+     or
+     ```bash
+     del app/Mail/WelcomeEmail.php
+     ```
+
+2. **Create the Markdown Email:**
+   - Run the correct `make:mail` command with the `--markdown` option:
+     ```bash
+     php artisan make:mail WelcomeEmail --markdown=emails.welcome
+     ```
+     This will create a new mail class named `WelcomeEmail` with a corresponding Markdown template in the `resources/views/emails` directory.
+
+3. **Update the Markdown Template (Optional):**
+   - Open the generated Markdown template (`resources/views/emails/welcome.blade.php`) and customize it according to your needs.
+
+### Creating the envelope
+
+Using a global from address:
+you may specify a global "from" address in your config/mail.php configuration file. This address will be used if no other "from" address is specified within the mailable class. I modified it:
+
+Here, it uses the .env values IF PRESENT. As the reply_to value is not set there, Laravel uses the value that is set here in config/mail.php
+
+```php
+'from' => [
+        'address' => env('MAIL_FROM_ADDRESS', 'ourAddress@example.com'),
+        'name' => env('MAIL_FROM_NAME', 'Our Example Name'),
+    ],
+//added this:
+'reply_to' => ['address' => 'ourAddress2@example.com', 'name' => 'Our Second Address Name'],
+```
+
+FOR TESTING I CHANGED THE EMAIL PORT FROM 1025 in the .env

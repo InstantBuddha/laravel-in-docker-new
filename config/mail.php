@@ -99,9 +99,11 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'set_in_mail_php@example.hu'),
+        'name' => env('MAIL_FROM_NAME', 'NameSet InMailPhp'),
     ],
+    //added this:
+'reply_to' => ['address' => 'ourAddress2@inmailphp.com', 'name' => 'OurSecond AddressName InMailPhp'],
 
     /*
     |--------------------------------------------------------------------------
