@@ -15,6 +15,9 @@
   - [Emails: Make:mail](#emails-makemail)
       - [Undo the Mistaken Action:](#undo-the-mistaken-action)
     - [Creating the envelope](#creating-the-envelope)
+    - [Changing the official Laravel email template](#changing-the-official-laravel-email-template)
+  - [Solving the bind mount permission issue](#solving-the-bind-mount-permission-issue)
+  - [MAILTRAP TEST](#mailtrap-test)
 
 ## Setup
 
@@ -659,4 +662,26 @@ Here, it uses the .env values IF PRESENT. As the reply_to value is not set there
 'reply_to' => ['address' => 'ourAddress2@example.com', 'name' => 'Our Second Address Name'],
 ```
 
+### Changing the official Laravel email template
+
+First I need to publish the Laravel email views:
+
+```bash
+php artisan vendor:publish --tag=laravel-mail
+```
+
+The above command will copy the email views to your project's resources/views/vendor/mail directory. In that directory, you'll find several Blade templates, including html/message.blade.php. They can be edited.
+
+## Solving the bind mount permission issue
+
+```bash
+chmod -R u+rwx ~/NEW_PROGRAMMING/laravel-in-docker-new
+chmod -R g+rx ~/NEW_PROGRAMMING/laravel-in-docker-new
+chmod -R o+rx ~/NEW_PROGRAMMING/laravel-in-docker-new
+
+sudo chown -R dan:dan ~/NEW_PROGRAMMING/laravel-in-docker-new
+```
+
+## MAILTRAP TEST
 FOR TESTING I CHANGED THE EMAIL PORT FROM 1025 in the .env
+After testing the url should be removed too from web.php
