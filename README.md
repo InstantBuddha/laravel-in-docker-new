@@ -17,7 +17,7 @@
     - [Creating the envelope](#creating-the-envelope)
     - [Changing the official Laravel email template](#changing-the-official-laravel-email-template)
   - [Solving the bind mount permission issue](#solving-the-bind-mount-permission-issue)
-  - [MAILTRAP TEST](#mailtrap-test)
+  - [Adding mailcathcher](#adding-mailcathcher)
 
 ## Setup
 
@@ -682,6 +682,99 @@ chmod -R o+rx ~/NEW_PROGRAMMING/laravel-in-docker-new
 sudo chown -R dan:dan ~/NEW_PROGRAMMING/laravel-in-docker-new
 ```
 
-## MAILTRAP TEST
-FOR TESTING I CHANGED THE EMAIL PORT FROM 1025 in the .env
-After testing the url should be removed too from web.php
+## Adding mailcathcher
+
+The docker-compose.yml needed to be modified the following way:
+
+```yml
+version: "3"
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: laravel-in-docker-new-app-1
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - web
+      - db
+    networks:
+      - laravel-in-docker-new-network    
+  web:
+    image: nginx:alpine
+    container_name: laravel-in-docker-new-web-1
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app
+      - ./nginx-config:/etc/nginx/conf.d 
+    networks:
+      - laravel-in-docker-new-network
+  db:
+    image: mysql:8.1
+    container_name: laravel-in-docker-new-db-1
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 0
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    networks:
+      - laravel-in-docker-new-network  
+  mailcatcher:
+    image: schickling/mailcatcher
+    container_name: laravel-in-docker-new-mailcatcher-1
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+    networks:
+      - laravel-in-docker-new-network    
+volumes:
+  db-data:
+networks:
+  laravel-in-docker-new-network:  
+```
+
+And in .env the following information needed to be set with 1 new line:
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=mailcatcher
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="set_in_env@example.hu"
+MAIL_FROM_NAME="OurName SetInDotEnv"
+MAILCATCHER_PORT_1025_TCP_ADDR=0.0.0.0
+```
+For testing web.php was modified with the following:
+
+```php
+use App\Mail\WelcomeEmail;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/testemail', function () {
+    $toEmail = 'recipient@example.com';
+    $name = 'John Doe';
+    $phone_number = '0036701234567';
+
+    Mail::to($toEmail)->send(new WelcomeEmail($name, $phone_number));
+
+    return 'Test email sent';
+});
+```
+
+With these settings, a test email can be sent at:
+http://localhost/testemail
+The emails can be checked at:
+http://localhost:1080/
