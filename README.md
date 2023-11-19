@@ -18,6 +18,8 @@
     - [Changing the official Laravel email template](#changing-the-official-laravel-email-template)
   - [Solving the bind mount permission issue](#solving-the-bind-mount-permission-issue)
   - [Adding mailcathcher](#adding-mailcathcher)
+  - [Events](#events)
+  - [Testing with events](#testing-with-events)
 
 ## Setup
 
@@ -778,3 +780,95 @@ With these settings, a test email can be sent at:
 http://localhost/testemail
 The emails can be checked at:
 http://localhost:1080/
+
+
+## Events
+
+Working according to the following:
+https://laravel.com/docs/10.x/events#generating-events-and-listeners
+
+1. **Create an Event:**
+   - Run the following command to generate an event class:
+
+     ```bash
+     php artisan make:event MemberRegistered
+     ```
+
+   - This will create a file in the `app/Events` directory, like `MemberRegistered.php`.
+
+2. **Modify the Event Class:**
+   - Modify `MemberRegistered.php` slightly
+
+     ```php
+     public function __construct(public Member $member)
+    {
+
+    }
+     ```
+
+3. **Create a Listener:**
+   - Run the following command to generate a listener class:
+
+     ```bash
+     php artisan make:listener SendWelcomeEmail --event=MemberRegistered
+     ```
+
+   - This will create a file in the `app/Listeners` directory, like `SendWelcomeEmail.php`.
+
+4. **Modify the Listener (`SendWelcomeEmail.php`):**
+
+   ```php
+   use Illuminate\Support\Facades\Mail;
+   use App\Mail\WelcomeEmail;
+
+   public function handle(MemberRegistered $event)
+   {
+       $member = $event->member;
+
+       $toEmail = $member->email;
+       $name = $member->name;
+       $phone_number = $member->phone_number;
+
+       Mail::to($toEmail)->send(new WelcomeEmail($name, $phone_number));
+   }
+   ```
+5. Manually registering the events
+   Modify EventServiceProvider.php like this:
+
+   ```php
+   public function boot(): void
+    {
+        Event::listen(
+            MemberRegistered::class,
+            SendWelcomeEmail::class,
+        );
+    }
+   ```
+6. **Dispatch the Event:**
+
+https://laravel.com/docs/10.x/events#dispatching-events
+
+   In MemberController.php change the part:
+
+     ```php
+     public function store(StoreMemberRequest $request): JsonResource
+    {
+        $member = Member::create($request->all());
+        MemberRegistered::dispatch($member);
+        return new JsonResource($member);
+    }
+     ```
+
+## Testing with events
+
+https://laravel.com/docs/10.x/eloquent#events-using-closures
+
+Here, they mention Sometimes you may wish to "save" a given model without dispatching any events. You may accomplish this using the saveQuietly method:
+
+```php
+$user = User::findOrFail(1);
+ 
+$user->name = 'Victoria Faith';
+ 
+$user->saveQuietly();
+```

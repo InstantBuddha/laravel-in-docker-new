@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Events\MemberRegistered;
 use App\Http\Requests\StoreMemberRequest;
 use App\Models\Member;
 use Exception;
@@ -31,6 +32,7 @@ class MemberController extends Controller
     public function store(StoreMemberRequest $request): JsonResource
     {
         $member = Member::create($request->all());
+        MemberRegistered::dispatch($member);
         return new JsonResource($member);
     }
 }
