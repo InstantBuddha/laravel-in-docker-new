@@ -1,11 +1,11 @@
 <x-mail::message>
 # Successful registration
 
-Hello {{$name}}!
+Hello {{$member->name}}!
 
 We are happy that you registered.
 
-Your registered phone number is: **{{$phone_number}}**
+Your registered phone number is: **{{$member->phone_number}}**
 
 
 <x-mail::button :url="'https://www.google.com/'">

@@ -1,6 +1,7 @@
 <?php
 
 use App\Mail\WelcomeEmail;
+use App\Models\Member;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 
@@ -25,11 +26,9 @@ Route::get('/greeting', function () {
 });
 
 Route::get('/testemail', function () {
-    $toEmail = 'recipient@example.com';
-    $name = 'John Doe';
-    $phone_number = '0036701234567';
+    $exampleMember = Member::factory()->make();
 
-    Mail::to($toEmail)->send(new WelcomeEmail($name, $phone_number));
+    Mail::to($exampleMember->email)->send(new WelcomeEmail($exampleMember));
 
     return 'Test email sent';
 });

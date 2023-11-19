@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Mail\WelcomeEmail;
 use App\Models\Member;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -46,7 +47,12 @@ class MemberTest extends TestCase
         $this->assertEquals($member->phone_number, $response['phone_number']); // might be unnecessary or moved to a separate function to make the code more elegant
     }
 
+    public function test_mailable_content(): void
+    {
+        $member = Member::factory()->create();
 
+        $mailable = new WelcomeEmail($member);
+    }
     /**
      * A basic feature test example.
      */

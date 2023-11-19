@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use App\Models\Member;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -18,7 +19,7 @@ class WelcomeEmail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(private $name, private $phone_number)
+    public function __construct(public Member $member)
     {
         //
     }
@@ -40,10 +41,6 @@ class WelcomeEmail extends Mailable
     {
         return new Content(
             markdown: 'emails.welcome',
-            with: [
-                'name' => $this->name,
-                'phone_number' => $this->phone_number
-            ],
         );
     }
 

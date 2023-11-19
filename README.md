@@ -19,7 +19,7 @@
   - [Solving the bind mount permission issue](#solving-the-bind-mount-permission-issue)
   - [Adding mailcathcher](#adding-mailcathcher)
   - [Events](#events)
-  - [Testing with events](#testing-with-events)
+  - [Testing Emails](#testing-emails)
 
 ## Setup
 
@@ -761,16 +761,19 @@ MAILCATCHER_PORT_1025_TCP_ADDR=0.0.0.0
 For testing web.php was modified with the following:
 
 ```php
+<?php
+
 use App\Mail\WelcomeEmail;
+use App\Models\Member;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
 
-Route::get('/testemail', function () {
-    $toEmail = 'recipient@example.com';
-    $name = 'John Doe';
-    $phone_number = '0036701234567';
+//other routes
 
-    Mail::to($toEmail)->send(new WelcomeEmail($name, $phone_number));
+Route::get('/testemail', function () {
+    $exampleMember = Member::factory()->make();
+
+    Mail::to($exampleMember->email)->send(new WelcomeEmail($exampleMember));
 
     return 'Test email sent';
 });
@@ -817,21 +820,40 @@ https://laravel.com/docs/10.x/events#generating-events-and-listeners
 
 4. **Modify the Listener (`SendWelcomeEmail.php`):**
 
-   ```php
-   use Illuminate\Support\Facades\Mail;
-   use App\Mail\WelcomeEmail;
+```php
+<?php
 
-   public function handle(MemberRegistered $event)
-   {
-       $member = $event->member;
+declare(strict_types=1);
 
-       $toEmail = $member->email;
-       $name = $member->name;
-       $phone_number = $member->phone_number;
+namespace App\Listeners;
 
-       Mail::to($toEmail)->send(new WelcomeEmail($name, $phone_number));
-   }
-   ```
+use App\Events\MemberRegistered;
+use App\Mail\WelcomeEmail;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Mail;
+
+class SendWelcomeEmail
+{
+    /**
+     * Create the event listener.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the event.
+     */
+    public function handle(MemberRegistered $event): void
+    {
+        $member = $event->member;
+
+        Mail::to($member->email)->send(new WelcomeEmail($member));
+    }
+}
+```
 5. Manually registering the events
    Modify EventServiceProvider.php like this:
 
@@ -859,16 +881,13 @@ https://laravel.com/docs/10.x/events#dispatching-events
     }
      ```
 
-## Testing with events
+## Testing Emails
 
-https://laravel.com/docs/10.x/eloquent#events-using-closures
+https://laravel.com/docs/10.x/eloquent#muting-events
 
-Here, they mention Sometimes you may wish to "save" a given model without dispatching any events. You may accomplish this using the saveQuietly method:
+Here, they mention that we might want to mute events, but it was not necessary as emails were NOT sent because I just used factory()->make() ???
 
-```php
-$user = User::findOrFail(1);
- 
-$user->name = 'Victoria Faith';
- 
-$user->saveQuietly();
-```
+Working with this:
+
+https://laravel.com/docs/10.x/mail#testing-mailable-content
+

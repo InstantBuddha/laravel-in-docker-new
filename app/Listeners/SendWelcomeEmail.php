@@ -27,10 +27,6 @@ class SendWelcomeEmail
     {
         $member = $event->member;
 
-        $toEmail = $member->email;
-        $name = $member->name;
-        $phone_number = $member->phone_number;
-
-        Mail::to($toEmail)->send(new WelcomeEmail($name, $phone_number));
+        Mail::to($member->email)->send(new WelcomeEmail($member));
     }
 }
