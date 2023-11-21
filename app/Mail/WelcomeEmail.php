@@ -9,6 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
@@ -30,6 +31,10 @@ class WelcomeEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address('ourHardcoded@address.com', 'OurHardcodedName InWelcomeEmailPhp'),    //Unfortunately, the globally set variable in config/mail.php didn't work with the tests 
+            replyTo: [
+                new Address('taylor@example.com', 'Árvíztűrő Tükörfúrógép'),
+            ],
             subject: 'Welcome Email',
         );
     }

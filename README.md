@@ -674,6 +674,8 @@ php artisan vendor:publish --tag=laravel-mail
 
 The above command will copy the email views to your project's resources/views/vendor/mail directory. In that directory, you'll find several Blade templates, including html/message.blade.php. They can be edited.
 
+**The templates are different for HTML and for plain text!**
+
 ## Solving the bind mount permission issue
 
 ```bash
@@ -883,11 +885,41 @@ https://laravel.com/docs/10.x/events#dispatching-events
 
 ## Testing Emails
 
-https://laravel.com/docs/10.x/eloquent#muting-events
-
-Here, they mention that we might want to mute events, but it was not necessary as emails were NOT sent because I just used factory()->make() ???
-
 Working with this:
 
 https://laravel.com/docs/10.x/mail#testing-mailable-content
 
+In the end the test for the mailable looks like this:
+
+```php
+public function test_mailable_content(): void
+    {
+        $member = Member::factory()->create();
+
+        $mailable = new WelcomeEmail($member);
+
+        Mail::fake();
+
+        Mail::to($member->email)->send($mailable);
+
+        Mail::assertSent(WelcomeEmail::class, function (WelcomeEmail $mail) use ($member){
+            return $mail->hasTo($member->email) &&
+            $mail->hasFrom('ourHardcoded@address.com', 'OurHardcodedName InWelcomeEmailPhp') &&
+            $mail->hasReplyTo('taylor@example.com', 'Árvíztűrő Tükörfúrógép') &&
+            $mail->hasSubject('Welcome Email');
+        });
+
+        $mailable->assertHasSubject('Welcome Email');
+        $mailable->assertSeeInHtml($member->name);
+        $mailable->assertSeeInHtml($member->phone_number);
+        $mailable->assertSeeInHtml('Successful registration');
+        $mailable->assertSeeInHtml('árvíztűrő tükörfúrógép');
+        $mailable->assertSeeInHtml('A hardcoded company name');
+        $mailable->assertSeeInHtml('book_logo_64x64.png');  //Does it do what it should?
+        $mailable->assertSeeInText($member->name);
+        $mailable->assertSeeInText($member->phone_number);
+        $mailable->assertSeeInText('Successful registration');
+        $mailable->assertSeeInText('árvíztűrő tükörfúrógép');
+        $mailable->assertSeeInText('A hardcoded company name');
+    }
+```
