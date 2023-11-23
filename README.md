@@ -20,6 +20,7 @@
   - [Adding mailcathcher](#adding-mailcathcher)
   - [Events](#events)
   - [Testing Emails](#testing-emails)
+  - [Rate Limiting](#rate-limiting)
 
 ## Setup
 
@@ -923,3 +924,15 @@ public function test_mailable_content(): void
         $mailable->assertSeeInText('A hardcoded company name');
     }
 ```
+
+## Rate Limiting
+
+Following this:
+https://laravel.com/docs/10.x/routing#defining-rate-limiters
+
+for global:
+https://laracasts.com/discuss/channels/laravel/global-rate-limiting-for-routes
+
+On the same page they mention Cross-Origin Resource Sharing (CORS) which could be used instead of validating frontend.
+
+https://laravel.com/docs/10.x/routing#rate-limiting
