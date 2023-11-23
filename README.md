@@ -933,6 +933,33 @@ https://laravel.com/docs/10.x/routing#defining-rate-limiters
 for global:
 https://laracasts.com/discuss/channels/laravel/global-rate-limiting-for-routes
 
+The built in app/providers/RouteServiceProvider needed to be modified like this:
+
+```php
+public function boot(): void
+    {
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(10)->by($request->ip());
+        });
+
+        RateLimiter::for('web', function (Request $request){
+            return Limit::perMinute(120)->by($request->ip());
+        });
+
+        $this->routes(function () {
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/api.php'));
+
+            Route::middleware('web')
+                ->middleware('throttle:web')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/web.php'));
+   
+        });
+    }
+```
+
 On the same page they mention Cross-Origin Resource Sharing (CORS) which could be used instead of validating frontend.
 
 https://laravel.com/docs/10.x/routing#rate-limiting
