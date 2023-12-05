@@ -31,10 +31,8 @@ class WelcomeEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('ourHardcoded@address.com', 'OurHardcodedName InWelcomeEmailPhp'),    //Unfortunately, the globally set variable in config/mail.php didn't work with the tests 
-            replyTo: [
-                new Address('taylor@example.com', 'Árvíztűrő Tükörfúrógép'),
-            ],
+            from: env('MAIL_FROM_ADDRESS', 'MAIL_FROM_NAME'),
+            to: $this->member->email,
             subject: 'Welcome Email',
         );
     }

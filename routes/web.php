@@ -28,7 +28,6 @@ Route::get('/greeting', function () {
 Route::get('/testemail', function () {
     $exampleMember = Member::factory()->make();
 
-    Mail::to($exampleMember->email)->send(new WelcomeEmail($exampleMember));
-
+    Mail::send(new WelcomeEmail($exampleMember));
     return 'Test email sent';
 });

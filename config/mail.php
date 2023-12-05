@@ -103,7 +103,7 @@ return [
         'name' => env('MAIL_FROM_NAME', 'NameSet InMailPhp'),
     ],
     //added this:
-'reply_to' => ['address' => 'ourAddress2@inmailphp.com', 'name' => 'OurSecond AddressName InMailPhp'],
+    'reply_to' => ['address' => 'replyToAddress@inmailphp.com', 'name' => 'OurReplyToAddress InMailPhp'],
 
     /*
     |--------------------------------------------------------------------------

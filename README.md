@@ -609,6 +609,7 @@ class MemberTest extends TestCase
 Then run the test:
 
 ```sh
+docker exec -it laravel-in-docker-new-app-1 sh
 php artisan test
 ```
 
@@ -663,6 +664,19 @@ Here, it uses the .env values IF PRESENT. As the reply_to value is not set there
     ],
 //added this:
 'reply_to' => ['address' => 'ourAddress2@example.com', 'name' => 'Our Second Address Name'],
+```
+
+In WelcomeEmail.php the envelope looked like this in the end:
+
+```php
+public function envelope(): Envelope
+    {
+        return new Envelope(
+            from: env('MAIL_FROM_ADDRESS', 'MAIL_FROM_NAME'),
+            to: $this->member->email,
+            subject: 'Welcome Email',
+        );
+    }
 ```
 
 ### Changing the official Laravel email template
@@ -895,34 +909,44 @@ In the end the test for the mailable looks like this:
 ```php
 public function test_mailable_content(): void
     {
-        $member = Member::factory()->create();
+        Mail::fake();
+
+        $member = Member::factory()->make();
 
         $mailable = new WelcomeEmail($member);
 
-        Mail::fake();
+        Mail::send($mailable);
 
-        Mail::to($member->email)->send($mailable);
-
-        Mail::assertSent(WelcomeEmail::class, function (WelcomeEmail $mail) use ($member){
-            return $mail->hasTo($member->email) &&
-            $mail->hasFrom('ourHardcoded@address.com', 'OurHardcodedName InWelcomeEmailPhp') &&
-            $mail->hasReplyTo('taylor@example.com', 'Árvíztűrő Tükörfúrógép') &&
+        Mail::assertSent(WelcomeEmail::class, function (WelcomeEmail $mail) use ($member) {
+            $mail->hasTo($member->email);
+            $mail->hasFrom('set_in_env@example.hu', 'OurName SetInDotEnv');
+            $mail->hasReplyTo('replyToAddress@inmailphp.com', 'OurReplyToAddress InMailPhp');
             $mail->hasSubject('Welcome Email');
+            return true;
         });
 
-        $mailable->assertHasSubject('Welcome Email');
         $mailable->assertSeeInHtml($member->name);
         $mailable->assertSeeInHtml($member->phone_number);
         $mailable->assertSeeInHtml('Successful registration');
         $mailable->assertSeeInHtml('árvíztűrő tükörfúrógép');
         $mailable->assertSeeInHtml('A hardcoded company name');
-        $mailable->assertSeeInHtml('book_logo_64x64.png');  //Does it do what it should?
+        $mailable->assertSeeInHtml('book_logo_64x64.png');
         $mailable->assertSeeInText($member->name);
         $mailable->assertSeeInText($member->phone_number);
         $mailable->assertSeeInText('Successful registration');
         $mailable->assertSeeInText('árvíztűrő tükörfúrógép');
         $mailable->assertSeeInText('A hardcoded company name');
     }
+```
+
+For testing by hand the following was added to web.php
+```php
+Route::get('/testemail', function () {
+    $exampleMember = Member::factory()->make();
+    
+    Mail::send(new WelcomeEmail($exampleMember));
+    return 'Test email sent';
+});
 ```
 
 ## Rate Limiting

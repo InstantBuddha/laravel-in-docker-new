@@ -27,6 +27,6 @@ class SendWelcomeEmail
     {
         $member = $event->member;
 
-        Mail::to($member->email)->send(new WelcomeEmail($member));
+        Mail::send(new WelcomeEmail($member));
     }
 }
