@@ -20,6 +20,8 @@
   - [Adding mailcathcher](#adding-mailcathcher)
   - [Events](#events)
   - [Testing Emails](#testing-emails)
+  - [Adding a closure](#adding-a-closure)
+    - [Cleaning up the event listener](#cleaning-up-the-event-listener)
   - [Rate Limiting](#rate-limiting)
 
 ## Setup
@@ -948,6 +950,32 @@ Route::get('/testemail', function () {
     return 'Test email sent';
 });
 ```
+## Adding a closure
+
+Working based on this:
+https://laravel.com/docs/10.x/eloquent#events-using-closures
+
+Just added the following to the end of Member class in Member.php:
+```php
+protected static function booted(): void
+    {
+        static::created(function (Member $member) {
+            Mail::send(new WelcomeEmail($member));
+        });
+    }
+```
+
+### Cleaning up the event listener
+
+remove the Events, Listeners directories:
+```sh
+sudo rm -r Events
+sudo rm -r Listeners
+```
+
+In EventServiceProvider.php emptied the boot() method and the imports of MemberRegistered and SendWelcomeEmail classes.
+
+In MemberController, removed the MemberRegistered::dispatch line with its import.
 
 ## Rate Limiting
 
