@@ -31,6 +31,7 @@ class MemberTest extends TestCase
     public function testMember_store(): void
     {
         $member = Member::factory()->make();
+
         $response = $this->post(self::BASE_ENDPOINT, $member->toArray())->json('data');
         $this->assertNotNull($response['id']);
         $this->assertEquals($member->name, $response['name']);
@@ -71,12 +72,29 @@ class MemberTest extends TestCase
         $mailable->assertSeeInHtml('Successful registration');
         $mailable->assertSeeInHtml('árvíztűrő tükörfúrógép');
         $mailable->assertSeeInHtml('A hardcoded company name');
-        $mailable->assertSeeInHtml('book_logo_64x64.png');
+        if($member->address){
+            $mailable->assertSeeInHtml($member->address);
+        }
+        if($member->comment){
+            $mailable->assertSeeInHtml($member->comment);
+        }
+        if($member->mailing_list){
+            $mailable->assertSeeInHtml('You have chosen to receive our newsletter.');
+        }
         $mailable->assertSeeInText($member->name);
         $mailable->assertSeeInText($member->phone_number);
         $mailable->assertSeeInText('Successful registration');
         $mailable->assertSeeInText('árvíztűrő tükörfúrógép');
         $mailable->assertSeeInText('A hardcoded company name');
+        if($member->address){
+            $mailable->assertSeeInText($member->address);
+        }
+        if($member->comment){
+            $mailable->assertSeeInText($member->comment);
+        }
+        if($member->mailing_list){
+            $mailable->assertSeeInText('You have chosen to receive our newsletter.');
+        }
     }
     /**
      * A basic feature test example.

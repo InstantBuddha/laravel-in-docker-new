@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use Illuminate\Support\Str;
@@ -10,15 +12,23 @@ use App\Models\Member;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Member>
  */
-class MemberFactory extends Factory
-{
+class MemberFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
+    public function definition(): array {
+        if(fake()->boolean(60)) {
+            return [
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone_number' => fake()->phoneNumber,
+                'mailing_list' => fake()->boolean,
+                'email_verified_at' => now(),
+            ];
+        }
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
@@ -29,6 +39,6 @@ class MemberFactory extends Factory
             'comment' => fake()->text,
             'mailing_list' => fake()->boolean,
             'email_verified_at' => now(),
-    ];
+        ];
     }
 }

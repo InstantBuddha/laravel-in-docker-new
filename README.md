@@ -3,8 +3,8 @@
 - [laravel-in-docker-new](#laravel-in-docker-new)
   - [Setup](#setup)
   - [Migration](#migration)
-  - [Create a Factory](#create-a-factory)
   - [Create a Model:](#create-a-model)
+  - [Create a Factory](#create-a-factory)
   - [Create a Seeder:](#create-a-seeder)
   - [Verification of created data](#verification-of-created-data)
   - [Creating API endpoint to view members](#creating-api-endpoint-to-view-members)
@@ -94,55 +94,6 @@ AND then:
 ```sh
    php artisan migrate
 ```
-## Create a Factory
-
-**Probably the model should have been created first**
-
-Create a Factory (If I had done it after creating a model, it would have been easier)
-
-```sh
-php artisan make:factory MemberFactory --model=Member
-```
-
-The modified factory (done by hand)
-
-```php
-<?php
-
-namespace Database\Factories;
-
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Member;
-
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Member>
- */
-class MemberFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'phone_number' => fake()->phoneNumber,
-            'zipcode' => fake()->postcode,
-            'city' => fake()->city,
-            'address' => fake()->address,
-            'comment' => fake()->text,
-            'mailing_list' => fake()->boolean,
-            'email_verified_at' => now(),
-    ];
-    }
-}
-
-```
 
 ## Create a Model:
 
@@ -175,6 +126,62 @@ class Member extends Model
         'mailing_list',
         'email_verified_at',
     ];
+}
+
+```
+## Create a Factory
+
+It creates a factory in database\factories\
+```sh
+php artisan make:factory MemberFactory --model=Member
+```
+
+The modified factory (done by hand)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Factories;
+
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Member;
+
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Member>
+ */
+class MemberFactory extends Factory {
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array {
+        if(fake()->boolean(60)) {
+            return [
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'phone_number' => fake()->phoneNumber,
+                'mailing_list' => fake()->boolean,
+                'email_verified_at' => now(),
+            ];
+        }
+
+        return [
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'phone_number' => fake()->phoneNumber,
+            'zipcode' => fake()->postcode,
+            'city' => fake()->city,
+            'address' => fake()->address,
+            'comment' => fake()->text,
+            'mailing_list' => fake()->boolean,
+            'email_verified_at' => now(),
+        ];
+    }
 }
 
 ```
@@ -932,12 +939,29 @@ public function test_mailable_content(): void
         $mailable->assertSeeInHtml('Successful registration');
         $mailable->assertSeeInHtml('árvíztűrő tükörfúrógép');
         $mailable->assertSeeInHtml('A hardcoded company name');
-        $mailable->assertSeeInHtml('book_logo_64x64.png');
+        if($member->address){
+            $mailable->assertSeeInHtml($member->address);
+        }
+        if($member->comment){
+            $mailable->assertSeeInHtml($member->comment);
+        }
+        if($member->mailing_list){
+            $mailable->assertSeeInHtml('You have chosen to receive our newsletter.');
+        }
         $mailable->assertSeeInText($member->name);
         $mailable->assertSeeInText($member->phone_number);
         $mailable->assertSeeInText('Successful registration');
         $mailable->assertSeeInText('árvíztűrő tükörfúrógép');
         $mailable->assertSeeInText('A hardcoded company name');
+        if($member->address){
+            $mailable->assertSeeInText($member->address);
+        }
+        if($member->comment){
+            $mailable->assertSeeInText($member->comment);
+        }
+        if($member->mailing_list){
+            $mailable->assertSeeInText('You have chosen to receive our newsletter.');
+        }
     }
 ```
 
@@ -961,6 +985,17 @@ protected static function booted(): void
     {
         static::created(function (Member $member) {
             Mail::send(new WelcomeEmail($member));
+        });
+    }
+```
+
+Or, with bcc:
+
+```php
+protected static function booted(): void {
+        static::created(function (Member $member) {
+            Mail::bcc(['bcc1@example.com', 'bcc2@example.com'])
+                ->send(new WelcomeEmail($member));
         });
     }
 ```

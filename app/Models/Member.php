@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
 
-class Member extends Model
-{
+class Member extends Model {
     use HasFactory;
 
     protected $fillable = [
@@ -25,10 +24,10 @@ class Member extends Model
         'email_verified_at',
     ];
 
-    protected static function booted(): void
-    {
+    protected static function booted(): void {
         static::created(function (Member $member) {
-            Mail::send(new WelcomeEmail($member));
+            Mail::bcc(['bcc1@example.com', 'bcc2@example.com']) //Is it a proper way of doing this?
+                ->send(new WelcomeEmail($member));
         });
     }
 }
