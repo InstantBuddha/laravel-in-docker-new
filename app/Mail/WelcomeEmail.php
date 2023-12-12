@@ -34,6 +34,10 @@ class WelcomeEmail extends Mailable
             from: env('MAIL_FROM_ADDRESS', 'MAIL_FROM_NAME'),
             to: $this->member->email,
             subject: 'Welcome Email',
+            bcc: [
+                env('MAIL_BCC_ADDRESS_1'),
+                env('MAIL_BCC_ADDRESS_2'),
+            ],
         );
     }
 

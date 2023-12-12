@@ -99,11 +99,18 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'set_in_mail_php@example.hu'),
-        'name' => env('MAIL_FROM_NAME', 'NameSet InMailPhp'),
+        'address' => env('MAIL_FROM_ADDRESS', 'fallback_set_in_mail_php@example.hu'),
+        'name' => env('MAIL_FROM_NAME', 'FallbackNameSet InMailPhp'),
     ],
     //added this:
-    'reply_to' => ['address' => 'replyToAddress@inmailphp.com', 'name' => 'OurReplyToAddress InMailPhp'],
+    'reply_to' => [
+        'address' => env('MAIL_REPLY_TO_ADDRESS', 'fallback_replyto_set_in_mail_php@example.hu'),
+        'name' => env('MAIL_REPLY_TO_NAME', 'FallbackNameSet InMailPhp'),
+    ],
+    'bcc' => [
+        env('MAIL_BCC_ADDRESS_1', 'fallback_bcc1_set_in_mail_php@example.hu'),
+        env('MAIL_BCC_ADDRESS_2', 'fallback_bcc2_set_in_mail_php@example.hu'),
+    ], 
 
     /*
     |--------------------------------------------------------------------------

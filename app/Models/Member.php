@@ -26,8 +26,7 @@ class Member extends Model {
 
     protected static function booted(): void {
         static::created(function (Member $member) {
-            Mail::bcc(['bcc1@example.com', 'bcc2@example.com']) //Is it a proper way of doing this?
-                ->send(new WelcomeEmail($member));
+            Mail::send(new WelcomeEmail($member));
         });
     }
 }
