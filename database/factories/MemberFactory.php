@@ -12,13 +12,15 @@ use App\Models\Member;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Member>
  */
-class MemberFactory extends Factory {
+class MemberFactory extends Factory
+{
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    public function definition(): array {
+    public function definition(): array
+    {
         $memberProperties = [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
@@ -26,14 +28,14 @@ class MemberFactory extends Factory {
             'mailing_list' => fake()->boolean,
             'email_verified_at' => now(),
         ];
-        
-        if(fake()->boolean(60)) {
+
+        if (fake()->boolean(60)) {
             return array_merge($memberProperties,
-            ['zipcode' => fake()->postcode,
-            'city' => fake()->city,
-            'address' => fake()->address,
-            'comment' => fake()->text,]
-        );
+                ['zipcode' => fake()->postcode,
+                    'city' => fake()->city,
+                    'address' => fake()->address,
+                    'comment' => fake()->text,]
+            );
         }
 
         return $memberProperties;

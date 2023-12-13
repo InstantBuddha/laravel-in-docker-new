@@ -102,7 +102,7 @@ return [
         'address' => env('MAIL_FROM_ADDRESS', 'fallback_set_in_mail_php@example.hu'),
         'name' => env('MAIL_FROM_NAME', 'FallbackNameSet InMailPhp'),
     ],
-    //added this:
+    
     'reply_to' => [
         'address' => env('MAIL_REPLY_TO_ADDRESS', 'fallback_replyto_set_in_mail_php@example.hu'),
         'name' => env('MAIL_REPLY_TO_NAME', 'FallbackNameSet InMailPhp'),

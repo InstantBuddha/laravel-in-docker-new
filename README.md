@@ -23,6 +23,8 @@
   - [Adding a closure](#adding-a-closure)
     - [Cleaning up the event listener](#cleaning-up-the-event-listener)
   - [Rate Limiting](#rate-limiting)
+  - [Cross-Origin Resource Sharing (CORS)](#cross-origin-resource-sharing-cors)
+  - [Test rate limiting](#test-rate-limiting)
 
 ## Setup
 
@@ -126,6 +128,13 @@ class Member extends Model
         'mailing_list',
         'email_verified_at',
     ];
+
+    //when the mailable is ready, add the closure:
+    protected static function booted(): void {
+        static::created(function (Member $member) {
+            Mail::send(new WelcomeEmail($member));
+        });
+    }
 }
 
 ```
@@ -153,37 +162,35 @@ use App\Models\Member;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Member>
  */
-class MemberFactory extends Factory {
+class MemberFactory extends Factory
+{
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    public function definition(): array {
-        if(fake()->boolean(60)) {
-            return [
-                'name' => fake()->name(),
-                'email' => fake()->unique()->safeEmail(),
-                'phone_number' => fake()->phoneNumber,
-                'mailing_list' => fake()->boolean,
-                'email_verified_at' => now(),
-            ];
-        }
-
-        return [
+    public function definition(): array
+    {
+        $memberProperties = [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'phone_number' => fake()->phoneNumber,
-            'zipcode' => fake()->postcode,
-            'city' => fake()->city,
-            'address' => fake()->address,
-            'comment' => fake()->text,
             'mailing_list' => fake()->boolean,
             'email_verified_at' => now(),
         ];
+
+        if (fake()->boolean(60)) {
+            return array_merge($memberProperties,
+                ['zipcode' => fake()->postcode,
+                    'city' => fake()->city,
+                    'address' => fake()->address,
+                    'comment' => fake()->text,]
+            );
+        }
+
+        return $memberProperties;
     }
 }
-
 ```
 
 ## Create a Seeder:
@@ -667,12 +674,19 @@ you may specify a global "from" address in your config/mail.php configuration fi
 Here, it uses the .env values IF PRESENT. As the reply_to value is not set there, Laravel uses the value that is set here in config/mail.php
 
 ```php
-'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'ourAddress@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Our Example Name'),
+    'from' => [
+        'address' => env('MAIL_FROM_ADDRESS', 'fallback_set_in_mail_php@example.hu'),
+        'name' => env('MAIL_FROM_NAME', 'FallbackNameSet InMailPhp'),
     ],
-//added this:
-'reply_to' => ['address' => 'ourAddress2@example.com', 'name' => 'Our Second Address Name'],
+    
+    'reply_to' => [
+        'address' => env('MAIL_REPLY_TO_ADDRESS', 'fallback_replyto_set_in_mail_php@example.hu'),
+        'name' => env('MAIL_REPLY_TO_NAME', 'FallbackNameSet InMailPhp'),
+    ],
+    'bcc' => [
+        env('MAIL_BCC_ADDRESS_1', 'fallback_bcc1_set_in_mail_php@example.hu'),
+        env('MAIL_BCC_ADDRESS_2', 'fallback_bcc2_set_in_mail_php@example.hu'),
+    ],
 ```
 
 In WelcomeEmail.php the envelope looked like this in the end:
@@ -684,6 +698,10 @@ public function envelope(): Envelope
             from: env('MAIL_FROM_ADDRESS', 'MAIL_FROM_NAME'),
             to: $this->member->email,
             subject: 'Welcome Email',
+            bcc: [
+                env('MAIL_BCC_ADDRESS_1'),
+                env('MAIL_BCC_ADDRESS_2'),
+            ],
         );
     }
 ```
@@ -702,12 +720,26 @@ The above command will copy the email views to your project's resources/views/ve
 
 ## Solving the bind mount permission issue
 
+If files are created by a container, they require sudo to be changed, unless we set the permissions:
+
+for the whole project:
+
 ```bash
 chmod -R u+rwx ~/NEW_PROGRAMMING/laravel-in-docker-new
 chmod -R g+rx ~/NEW_PROGRAMMING/laravel-in-docker-new
 chmod -R o+rx ~/NEW_PROGRAMMING/laravel-in-docker-new
 
 sudo chown -R dan:dan ~/NEW_PROGRAMMING/laravel-in-docker-new
+```
+
+for an individual file inside the folder on the host machine
+
+```bash
+sudo chmod u+rwx MailableTest.php
+sudo chmod g+rx MailableTest.php
+sudo chmod o+rx MailableTest.php
+
+sudo chown dan:dan MailableTest.php
 ```
 
 ## Adding mailcathcher
@@ -1047,6 +1079,54 @@ public function boot(): void
     }
 ```
 
+## Cross-Origin Resource Sharing (CORS)
+
 On the same page they mention Cross-Origin Resource Sharing (CORS) which could be used instead of validating frontend.
 
 https://laravel.com/docs/10.x/routing#rate-limiting
+
+## Test rate limiting
+
+Official documentation:
+https://laravel.com/docs/10.x/http-tests
+
+In the end, the test looks like this:
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Feature;
+
+use App\Models\Member;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+
+class RateLimitingTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private const BASE_ENDPOINT = '/api/members/';
+    private const RATE_LIMIT = 60;
+
+    public function test_rate_limit()
+    {
+        for ($i = 1; $i <= self::RATE_LIMIT; $i++) {
+            $member = Member::factory()->make();
+            $this->withMiddleware(['api']);
+            $response = $this->post(self::BASE_ENDPOINT, $member->toArray())
+                ->assertCreated()
+                ->assertHeader('X-Ratelimit-Limit', self::RATE_LIMIT)
+                ->assertHeader('X-Ratelimit-Remaining', self::RATE_LIMIT - $i);
+        }
+
+        $member = Member::factory()->make();
+        $this->withMiddleware(['api']);
+        $response = $this->post(self::BASE_ENDPOINT, $member->toArray())
+            ->assertStatus(429);
+    }
+
+}
+
+```
