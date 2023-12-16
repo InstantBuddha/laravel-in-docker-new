@@ -25,6 +25,11 @@
   - [Rate Limiting](#rate-limiting)
   - [Cross-Origin Resource Sharing (CORS)](#cross-origin-resource-sharing-cors)
   - [Test rate limiting](#test-rate-limiting)
+  - [Add authentication](#add-authentication)
+    - [Uncomment the following line in app/Http/Kernel.php](#uncomment-the-following-line-in-apphttpkernelphp)
+    - [Modify routes/api.php](#modify-routesapiphp)
+    - [Create controller](#create-controller)
+    - [Create a User manually](#create-a-user-manually)
 
 ## Setup
 
@@ -1130,3 +1135,121 @@ class RateLimitingTest extends TestCase
 }
 
 ```
+
+## Add authentication
+
+Following this:
+https://www.laravelia.com/post/how-to-create-api-with-sanctum-authentication-in-laravel-10
+
+### Uncomment the following line in app/Http/Kernel.php
+
+```php
+\Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+```
+
+### Modify routes/api.php
+
+I suppose it would have been better to create the controller first, but:
+
+```php
+Route::controller(AuthController::class)->group(function(){
+    Route::post('login', 'login');
+});
+```
+
+### Create controller
+
+sh in and
+```sh
+docker exec -it laravel-in-docker-new-app-1 sh
+php artisan make:controller API/AuthController
+```
+
+(to change permissions on host machine:)
+
+```bash
+sudo chmod u+rwx AuthController.php
+sudo chmod g+rx AuthController.php
+sudo chmod o+rx AuthController.php
+
+sudo chown dan:dan AuthController.php
+```
+
+Modify it like this:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class AuthController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum', ['except' => ['login',]]);
+    }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+        
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            return response()->json([
+                'user' => $user,
+                'authorization' => [
+                    'token' => $user->createToken('ApiToken')->plainTextToken,
+                    'type' => 'bearer',
+                ]
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Invalid credentials'
+        ], 401);
+    }
+}
+```
+
+At this point, with an empty post request like this:
+
+http://localhost/api/login
+
+There is a 200 response with "hello world"
+
+### Create a User manually
+
+To create a hash of the password "testPassword"
+sh in to the Laravel container and
+
+```sh
+docker exec -it laravel-in-docker-new-app-1 sh
+php artisan tinker
+bcrypt('testPassword')
+```
+It will create the hash seen in the next bash commands
+
+To create the user manually bash into the db container and
+
+```bash
+docker exec -it laravel-in-docker-new-db-1 /bin/bash
+mysql -u root -p
+SHOW DATABASES;
+USE database;
+SHOW TABLES;
+INSERT INTO users (name, email, password) VALUES ('Tester One', 'testerone@example.com', "$2y$10$2D1AeM4o9YPBdgxQOUnyIO.Mb6pS8F7c6dl4Em.arnPRVSsNpSqnq");
+```
+
+Now the following POST request in postman will work:
+http://localhost/api/login?email=testerone@example.com&password=testPassword
