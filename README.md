@@ -30,6 +30,9 @@
     - [Modify routes/api.php](#modify-routesapiphp)
     - [Create controller](#create-controller)
     - [Create a User manually](#create-a-user-manually)
+    - [Set token expiration](#set-token-expiration)
+    - [Add a protected API route](#add-a-protected-api-route)
+    - [IMPORTANT Postman settings](#important-postman-settings)
 
 ## Setup
 
@@ -1253,3 +1256,56 @@ INSERT INTO users (name, email, password) VALUES ('Tester One', 'testerone@examp
 
 Now the following POST request in postman will work:
 http://localhost/api/login?email=testerone@example.com&password=testPassword
+
+
+### Set token expiration
+
+In app/config, there is sanctum.php and there change:
+```php
+'expiration' => 525600,
+```
+
+To get rid of the expired tokens, it is a good idea to prune them regularly:
+Change App\Console\Kernel.php
+
+```php
+protected function schedule(Schedule $schedule)
+{
+    $schedule->command('sanctum:prune-expired')->daily();
+}
+```
+
+### Add a protected API route
+
+In AuthController add
+```php
+    public function something(Request $request)
+    {
+        return response()->json([
+            'message' => 'Something happened successfully',
+        ]);
+    }
+```
+
+At this point if authorization is not set correctly it just gives back a general 500 error message
+
+In api.php add the line:
+
+```php
+Route::controller(AuthController::class)->group(function(){
+    Route::post('login', 'login');
+    Route::post('something', 'something');
+});
+```
+
+### IMPORTANT Postman settings
+
+In Postman, the following POST request needs to be created **WITH A SET API BEARER TOKEN IN AUTH** (set by hand)
+
+http://localhost/api/something
+
+**FURTHERMORE**, A key/value pair needs to be added in the headers, so that Postman will expect and accept **only** a JSON in response
+
+In Headers uncheck Accept */* and add
+Accept application/json
+instead!!!

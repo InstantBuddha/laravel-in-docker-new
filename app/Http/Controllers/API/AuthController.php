@@ -7,12 +7,13 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:sanctum', ['except' => ['login',]]);
+        $this->middleware('auth:sanctum', ['except' => ['login']]);
     }
 
     public function login(Request $request)
@@ -23,7 +24,7 @@ class AuthController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-        
+
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             return response()->json([
@@ -38,5 +39,12 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Invalid credentials'
         ], 401);
+    }
+
+    public function something(Request $request)
+    {
+        return response()->json([
+            'message' => 'Something happened successfully',
+        ]);
     }
 }

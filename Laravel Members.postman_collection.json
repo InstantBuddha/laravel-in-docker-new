@@ -79,7 +79,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost/api/members?name=Jack Jude&email=joed@example.com&phone_number=0123456789&zipcode=1199&city=CityCityx&address=8690 Raegan Inlet Apt&comment=Ipsam aspernatur possimus voluptatem voluptates laboriosam aut. Exercitationem velit eos sequi.&mailing_list=0",
+					"raw": "http://localhost/api/members?name=Test Pesrsonds&email=cccs@ampsle.mds&phone_number=0123456789&address=11 Street 11/a&comment=YYYIpsam  possimus voluptatem voluptates laboriosam aut. &mailing_list=0",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -91,11 +91,11 @@
 					"query": [
 						{
 							"key": "name",
-							"value": "Jack Jude"
+							"value": "Test Pesrsonds"
 						},
 						{
 							"key": "email",
-							"value": "joed@example.com"
+							"value": "cccs@ampsle.mds"
 						},
 						{
 							"key": "phone_number",
@@ -103,19 +103,21 @@
 						},
 						{
 							"key": "zipcode",
-							"value": "1199"
+							"value": "",
+							"disabled": true
 						},
 						{
 							"key": "city",
-							"value": "CityCityx"
+							"value": "",
+							"disabled": true
 						},
 						{
 							"key": "address",
-							"value": "8690 Raegan Inlet Apt"
+							"value": "11 Street 11/a"
 						},
 						{
 							"key": "comment",
-							"value": "Ipsam aspernatur possimus voluptatem voluptates laboriosam aut. Exercitationem velit eos sequi."
+							"value": "YYYIpsam  possimus voluptatem voluptates laboriosam aut. "
 						},
 						{
 							"key": "mailing_list",
@@ -160,6 +162,75 @@
 						"api",
 						"members",
 						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log in User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/api/login?email=testerone@example.com&password=testPassword",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"login"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "testerone@example.com"
+						},
+						{
+							"key": "password",
+							"value": "testPassword"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user authenticated only",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "10|JHEG3Gqn1NAyitWh4Ohz7RI2aksbnqOtFzcPlUFv07995226",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/api/something",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"something"
 					]
 				}
 			},
