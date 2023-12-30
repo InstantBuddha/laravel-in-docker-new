@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     //return view('welcome');
-    return 'Hello World';
+    return 'Hello World HOME';
 });
 
 Route::get('/greeting', function () {

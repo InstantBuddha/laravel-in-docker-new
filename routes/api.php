@@ -20,9 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::controller(AuthController::class)->group(function(){
-    Route::post('login', 'login');
-    Route::post('something', 'something');
-});
+Route::post('/auth/login', [AuthController::class, 'login']);
+
+Route::get('/auth/something', [AuthController::class, 'something']);
 
 Route::apiResource('members', MemberController::class);

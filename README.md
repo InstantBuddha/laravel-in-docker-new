@@ -1141,7 +1141,7 @@ class RateLimitingTest extends TestCase
 
 ## Add authentication
 
-Following this:
+Following this (which turns out to be partly bad information):
 https://www.laravelia.com/post/how-to-create-api-with-sanctum-authentication-in-laravel-10
 
 ### Uncomment the following line in app/Http/Kernel.php
@@ -1292,10 +1292,9 @@ At this point if authorization is not set correctly it just gives back a general
 In api.php add the line:
 
 ```php
-Route::controller(AuthController::class)->group(function(){
-    Route::post('login', 'login');
-    Route::post('something', 'something');
-});
+Route::post('/auth/login', [AuthController::class, 'login']);
+
+Route::get('/auth/something', [AuthController::class, 'something']);
 ```
 
 ### IMPORTANT Postman settings

@@ -172,25 +172,31 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "testerone@example.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "testPassword",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": "http://localhost/api/login?email=testerone@example.com&password=testPassword",
+					"raw": "http://localhost/api/auth/login",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"api",
+						"auth",
 						"login"
-					],
-					"query": [
-						{
-							"key": "email",
-							"value": "testerone@example.com"
-						},
-						{
-							"key": "password",
-							"value": "testPassword"
-						}
 					]
 				}
 			},
@@ -209,12 +215,12 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "10|JHEG3Gqn1NAyitWh4Ohz7RI2aksbnqOtFzcPlUFv07995226",
+							"value": "1|s24XpuBmtQm6Tnn9MG9KvKBsJfy8HgLkRA5cqG3qc6c22547",
 							"type": "string"
 						}
 					]
 				},
-				"method": "POST",
+				"method": "GET",
 				"header": [
 					{
 						"key": "Accept",
@@ -223,13 +229,14 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost/api/something",
+					"raw": "http://localhost/api/auth/something",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"api",
+						"auth",
 						"something"
 					]
 				}
