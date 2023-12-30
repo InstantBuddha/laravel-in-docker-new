@@ -28,8 +28,6 @@ class ApiAuthTest extends TestCase
 
         $response->assertStatus(200);
 
-        $this->actingAs($user);
-
         $response = $this->get('/api/auth/something');
 
         $response->assertStatus(200);

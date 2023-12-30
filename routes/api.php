@@ -22,6 +22,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/auth/login', [AuthController::class, 'login']);
 
-Route::get('/auth/something', [AuthController::class, 'something']);
+Route::middleware(['auth:sanctum'])->get('/auth/something', [AuthController::class, 'something']);
 
-Route::apiResource('members', MemberController::class);
+Route::middleware(['auth:sanctum'])->post('/auth/logout', [AuthController::class, 'logout']);
+
+Route::middleware(['auth:sanctum'])->apiResource('members', MemberController::class)->except(['store']);
+
+Route::post('/members', [MemberController::class, 'store']);

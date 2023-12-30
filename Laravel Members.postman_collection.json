@@ -129,10 +129,31 @@
 			"response": []
 		},
 		{
-			"name": "GET all members",
+			"name": "GET all members (with authentication)",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://localhost/api/members",
 					"protocol": "http",
@@ -148,12 +169,33 @@
 			"response": []
 		},
 		{
-			"name": "GET one member",
+			"name": "GET one member (with authentication)",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "http://localhost/api/members/2",
+					"raw": "http://localhost/api/members/12",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -161,7 +203,7 @@
 					"path": [
 						"api",
 						"members",
-						"2"
+						"12"
 					]
 				}
 			},
@@ -169,6 +211,21 @@
 		},
 		{
 			"name": "Log in User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"bearerToken\", jsonData.authorization.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -203,7 +260,7 @@
 			"response": []
 		},
 		{
-			"name": "get user authenticated only",
+			"name": "get something authenticated only",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true
@@ -215,7 +272,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "1|s24XpuBmtQm6Tnn9MG9KvKBsJfy8HgLkRA5cqG3qc6c22547",
+							"value": "{{bearerToken}}",
 							"type": "string"
 						}
 					]
@@ -238,6 +295,47 @@
 						"api",
 						"auth",
 						"something"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log user out",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/api/auth/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"auth",
+						"logout"
 					]
 				}
 			},

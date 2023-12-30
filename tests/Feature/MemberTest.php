@@ -6,6 +6,7 @@ namespace Tests\Feature;
 
 use App\Mail\WelcomeEmail;
 use App\Models\Member;
+use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -18,6 +19,17 @@ class MemberTest extends TestCase
 
     public function testMember_index(): void
     {
+        $user = User::create([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => bcrypt('reallySecretPassword123'),
+        ]);
+
+        $response = $this->json('POST', '/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'reallySecretPassword123',
+        ]);
+
         $members = Member::factory()->count(3)->create();
         $memberIds = $members->map(fn(Member $member) => $member->id)->toArray();
         $response = $this->get(self::BASE_ENDPOINT)->json('data');
@@ -38,9 +50,20 @@ class MemberTest extends TestCase
         $this->assertEquals($member->email, $response['email']);
         $this->assertEquals($member->phone_number, $response['phone_number']);
     }
-
+    
     public function testMember_show(): void
     {
+        $user = User::create([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => bcrypt('reallySecretPassword123'),
+        ]);
+
+        $response = $this->json('POST', '/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'reallySecretPassword123',
+        ]);
+
         $member = Member::factory()->count(3)->create()->random();
         $response = $this->get(self::BASE_ENDPOINT . $member->id)->json('data');
         $this->assertEquals($member->id, $response['id']);

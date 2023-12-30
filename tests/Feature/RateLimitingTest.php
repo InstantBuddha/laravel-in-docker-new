@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Models\Member;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -18,7 +19,18 @@ class RateLimitingTest extends TestCase
 
     public function test_rate_limit()
     {
-        for ($i = 1; $i <= self::RATE_LIMIT; $i++) {
+        $user = User::create([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => bcrypt('reallySecretPassword123'),
+        ]);
+
+        $response = $this->json('POST', '/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'reallySecretPassword123',
+        ]);
+
+        for ($i = 2; $i <= self::RATE_LIMIT; $i++) {
             $member = Member::factory()->make();
             $this->withMiddleware(['api']);
             $response = $this->post(self::BASE_ENDPOINT, $member->toArray())

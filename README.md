@@ -1144,6 +1144,9 @@ class RateLimitingTest extends TestCase
 Following this (which turns out to be partly bad information):
 https://www.laravelia.com/post/how-to-create-api-with-sanctum-authentication-in-laravel-10
 
+Later followed this:
+https://dev.to/shanisingh03/laravel-api-authentication-using-laravel-sanctum-edg
+
 ### Uncomment the following line in app/Http/Kernel.php
 
 ```php
