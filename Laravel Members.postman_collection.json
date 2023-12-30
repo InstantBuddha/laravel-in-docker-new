@@ -7,60 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "POST add basic info only",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"description": "text",
-						"type": "text"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": "text",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost/api/members?name=Jack Jones&email=jack@example.com&phone_number=123456789&mailing_list=0&city=CityCityx",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"path": [
-						"api",
-						"members"
-					],
-					"query": [
-						{
-							"key": "name",
-							"value": "Jack Jones"
-						},
-						{
-							"key": "email",
-							"value": "jack@example.com"
-						},
-						{
-							"key": "phone_number",
-							"value": "123456789"
-						},
-						{
-							"key": "mailing_list",
-							"value": "0"
-						},
-						{
-							"key": "city",
-							"value": "CityCityx"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "POST add all info",
 			"request": {
 				"method": "POST",
@@ -78,8 +24,53 @@
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Joe Jack",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "joejack@jggg.kss",
+							"type": "text"
+						},
+						{
+							"key": "phone_number",
+							"value": "0036123456789",
+							"type": "text"
+						},
+						{
+							"key": "zipcode",
+							"value": "1123",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "Budipest",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "11 Something street",
+							"type": "text"
+						},
+						{
+							"key": "comment",
+							"value": "Lorem ipsum something longgggggggggggggggggggggggggggggggggggggggggggggggg",
+							"type": "text"
+						},
+						{
+							"key": "mailing_list",
+							"value": "0",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": "http://localhost/api/members?name=Test Pesrsonds&email=cccs@ampsle.mds&phone_number=0123456789&address=11 Street 11/a&comment=YYYIpsam  possimus voluptatem voluptates laboriosam aut. &mailing_list=0",
+					"raw": "http://localhost/api/members",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -91,37 +82,162 @@
 					"query": [
 						{
 							"key": "name",
-							"value": "Test Pesrsonds"
+							"value": "gffghg Pesrssssondsaa",
+							"disabled": true
 						},
 						{
 							"key": "email",
-							"value": "cccs@ampsle.mds"
+							"value": "cvcvfg@ampsle.mds",
+							"disabled": true
 						},
 						{
 							"key": "phone_number",
-							"value": "0123456789"
+							"value": "0123456789",
+							"disabled": true
 						},
 						{
 							"key": "zipcode",
-							"value": "",
+							"value": "1234",
 							"disabled": true
 						},
 						{
 							"key": "city",
-							"value": "",
+							"value": "No empty strings",
 							"disabled": true
 						},
 						{
 							"key": "address",
-							"value": "11 Street 11/a"
+							"value": "11 Street 11/a",
+							"disabled": true
 						},
 						{
 							"key": "comment",
-							"value": "YYYIpsam  possimus voluptatem voluptates laboriosam aut. "
+							"value": "YYYIpsam  possimus voluptatem voluptates laboriosam aut. ",
+							"disabled": true
 						},
 						{
 							"key": "mailing_list",
-							"value": "0"
+							"value": "0",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST add all info Copy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": "text",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "text",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Joe Jack",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "joejack@jggg.kss",
+							"type": "text"
+						},
+						{
+							"key": "phone_number",
+							"value": "0036123456789",
+							"type": "text"
+						},
+						{
+							"key": "zipcode",
+							"value": "1123",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "Budipest",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "11 Something street",
+							"type": "text"
+						},
+						{
+							"key": "comment",
+							"value": "Lorem ipsum something longgggggggggggggggggggggggggggggggggggggggggggggggg",
+							"type": "text"
+						},
+						{
+							"key": "mailing_list",
+							"value": "0",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/api/members",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"members"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "gffghg Pesrssssondsaa",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "cvcvfg@ampsle.mds",
+							"disabled": true
+						},
+						{
+							"key": "phone_number",
+							"value": "0123456789",
+							"disabled": true
+						},
+						{
+							"key": "zipcode",
+							"value": "1234",
+							"disabled": true
+						},
+						{
+							"key": "city",
+							"value": "No empty strings",
+							"disabled": true
+						},
+						{
+							"key": "address",
+							"value": "11 Street 11/a",
+							"disabled": true
+						},
+						{
+							"key": "comment",
+							"value": "YYYIpsam  possimus voluptatem voluptates laboriosam aut. ",
+							"disabled": true
+						},
+						{
+							"key": "mailing_list",
+							"value": "0",
+							"disabled": true
 						}
 					]
 				}

@@ -21,7 +21,6 @@ class Member extends Model {
         'address',
         'comment',
         'mailing_list',
-        'email_verified_at',
     ];
 
     protected static function booted(): void {

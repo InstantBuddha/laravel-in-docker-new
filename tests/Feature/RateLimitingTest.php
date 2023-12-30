@@ -19,19 +19,20 @@ class RateLimitingTest extends TestCase
 
     public function test_rate_limit()
     {
+        $headers = [
+            'Accept' => 'application/json',
+        ];
+
         for ($i = 1; $i <= self::RATE_LIMIT; $i++) {
             $member = Member::factory()->make();
-            $this->withMiddleware(['api']);
-            $response = $this->post(self::BASE_ENDPOINT, $member->toArray())
-                ->assertCreated()
-                ->assertHeader('X-Ratelimit-Limit', self::RATE_LIMIT)
-                ->assertHeader('X-Ratelimit-Remaining', self::RATE_LIMIT - $i);
+            $response = $this->postJson(self::BASE_ENDPOINT, $member->toArray(), $headers);
+            $response->assertStatus(201);
+            $response->assertHeader('X-Ratelimit-Limit', self::RATE_LIMIT);
+            $response->assertHeader('X-Ratelimit-Remaining', self::RATE_LIMIT - $i);
         }
 
         $member = Member::factory()->make();
-        $this->withMiddleware(['api']);
-        $response = $this->post(self::BASE_ENDPOINT, $member->toArray())
-            ->assertStatus(429);
+        $response = $this->postJson(self::BASE_ENDPOINT, $member->toArray(), $headers);
+        $response->assertStatus(429);
     }
-
 }
