@@ -19,18 +19,7 @@ class RateLimitingTest extends TestCase
 
     public function test_rate_limit()
     {
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('reallySecretPassword123'),
-        ]);
-
-        $response = $this->json('POST', '/api/auth/login', [
-            'email' => $user->email,
-            'password' => 'reallySecretPassword123',
-        ]);
-
-        for ($i = 2; $i <= self::RATE_LIMIT; $i++) {
+        for ($i = 1; $i <= self::RATE_LIMIT; $i++) {
             $member = Member::factory()->make();
             $this->withMiddleware(['api']);
             $response = $this->post(self::BASE_ENDPOINT, $member->toArray())

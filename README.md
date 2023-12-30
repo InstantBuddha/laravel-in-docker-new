@@ -31,7 +31,7 @@
     - [Create controller](#create-controller)
     - [Create a User manually](#create-a-user-manually)
     - [Set token expiration](#set-token-expiration)
-    - [Add a protected API route](#add-a-protected-api-route)
+    - [Add a protected API route and change members routes](#add-a-protected-api-route-and-change-members-routes)
     - [IMPORTANT Postman settings](#important-postman-settings)
 
 ## Setup
@@ -1278,7 +1278,7 @@ protected function schedule(Schedule $schedule)
 }
 ```
 
-### Add a protected API route
+### Add a protected API route and change members routes
 
 In AuthController add
 ```php
@@ -1297,7 +1297,13 @@ In api.php add the line:
 ```php
 Route::post('/auth/login', [AuthController::class, 'login']);
 
-Route::get('/auth/something', [AuthController::class, 'something']);
+Route::middleware(['auth:sanctum'])->get('/auth/something', [AuthController::class, 'something']);
+
+Route::middleware(['auth:sanctum'])->post('/auth/logout', [AuthController::class, 'logout']);
+
+Route::middleware(['auth:sanctum'])->apiResource('members', MemberController::class)->except(['store']);
+
+Route::post('/members', [MemberController::class, 'store']);
 ```
 
 ### IMPORTANT Postman settings
@@ -1311,3 +1317,5 @@ http://localhost/api/something
 In Headers uncheck Accept */* and add
 Accept application/json
 instead!!!
+
+Saving the bearer token can be automatized using variables and tests, see the postman collection file.
