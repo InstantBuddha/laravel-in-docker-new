@@ -33,6 +33,7 @@
     - [Set token expiration](#set-token-expiration)
     - [Add a protected API route and change members routes](#add-a-protected-api-route-and-change-members-routes)
     - [IMPORTANT Postman settings](#important-postman-settings)
+  - [Adding React frontend](#adding-react-frontend)
 
 ## Setup
 
@@ -1319,3 +1320,15 @@ Accept application/json
 instead!!!
 
 Saving the bearer token can be automatized using variables and tests, see the postman collection file.
+
+## Adding React frontend
+
+First build the basic files with the command in the already created directory (react-frontend):
+```
+docker run -it --rm -v $(pwd):/react-frontend -w /react-frontend node:14-alpine sh -c "npx create-react-app ."
+```
+
+checking the container separately:
+```
+docker run -it --rm --name react-frontend -p 3000:3000 -v $(pwd):/react-frontend -w /react-frontend node:14-alpine sh -c "npm install && npm start"
+```
