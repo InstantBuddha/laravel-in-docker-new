@@ -12,6 +12,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Config;
 
 class WelcomeEmail extends Mailable
 {
@@ -31,13 +32,10 @@ class WelcomeEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: env('MAIL_FROM_ADDRESS', 'MAIL_FROM_NAME'),
+            from: Config::get('mail.from.address', 'mail.from.name'),
             to: $this->member->email,
             subject: 'Welcome Email',
-            bcc: [
-                env('MAIL_BCC_ADDRESS_1'),
-                env('MAIL_BCC_ADDRESS_2'),
-            ],
+            bcc: Config::get('mail.bcc'),
         );
     }
 
