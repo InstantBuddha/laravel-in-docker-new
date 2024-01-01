@@ -34,6 +34,8 @@
     - [Add a protected API route and change members routes](#add-a-protected-api-route-and-change-members-routes)
     - [IMPORTANT Postman settings](#important-postman-settings)
   - [Adding React frontend](#adding-react-frontend)
+    - [Add necessary libraries](#add-necessary-libraries)
+      - [React-bootstrap](#react-bootstrap)
 
 ## Setup
 
@@ -1331,4 +1333,28 @@ docker run -it --rm -v $(pwd):/react-frontend -w /react-frontend node:14-alpine 
 checking the container separately:
 ```
 docker run -it --rm --name react-frontend -p 3000:3000 -v $(pwd):/react-frontend -w /react-frontend node:14-alpine sh -c "npm install && npm start"
+```
+
+After that the docker-compose.yml and react.Dockerfile can be changed (to the present version)
+
+### Add necessary libraries
+
+sh in:
+
+```
+docker exec -it laravel-in-docker-new-react-frontend-1 sh
+```
+
+Then, add React Router, React Bootstrap,
+```
+npm i react-router-dom
+npm install react-bootstrap bootstrap
+```
+
+#### React-bootstrap
+
+include in the src/index.js or App.js file
+
+```js
+import 'bootstrap/dist/css/bootstrap.min.css';
 ```

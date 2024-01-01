@@ -1,12 +1,20 @@
 import './App.css';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Home from './components/Home';
+import Login from './components/Login';
+import ViewMembers from './components/ViewMembers';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>This is the frontend</h1>
-      </header>
-    </div>
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/view-members" element={<ViewMembers />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
