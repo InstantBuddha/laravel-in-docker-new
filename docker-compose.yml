@@ -3,7 +3,7 @@ services:
     app:
         build:
             context: ./
-            dockerfile: laravel.Dockerfile
+            dockerfile: Dockerfile
         container_name: laravel-in-docker-new-app-1
         working_dir: /app
         volumes:
@@ -13,17 +13,6 @@ services:
         depends_on:
             - web
             - db
-        networks:
-            - laravel-in-docker-new-network
-    react-frontend:
-        build:
-            context: ./
-            dockerfile: react.Dockerfile
-        container_name: laravel-in-docker-new-react-frontend-1
-        ports:
-          - "3000:3000"
-        volumes:
-          - ./react-frontend:/react-frontend
         networks:
             - laravel-in-docker-new-network
     web:

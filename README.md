@@ -1,6 +1,16 @@
 # laravel-in-docker-new
 
+A Dockerized Laravel backend project that provides API paths for frontend so that people can register a course. Upon successful registration they are saved to the SQL database as a Member and a welcome email is sent. The emails can be tested with a Dockerized instance of Mailcatcher. Administrators of the site (Users) have a protected API path that requires authentication, over which they can see a full list of all the Members.
+
+A Postman collection is provided as well for testing.
+
+A Dockerized React front-end repository can be found here: [Github repository link](https://github.com/InstantBuddha/react-frontend-for-laravel-in-docker-new)
+
+The following part of this README contains notes of the steps I took to create the project
+
+## Table of contents
 - [laravel-in-docker-new](#laravel-in-docker-new)
+  - [Table of contents](#table-of-contents)
   - [Setup](#setup)
   - [Migration](#migration)
   - [Create a Model:](#create-a-model)
@@ -34,9 +44,6 @@
     - [Add a protected API route and change members routes](#add-a-protected-api-route-and-change-members-routes)
     - [IMPORTANT Postman settings](#important-postman-settings)
   - [Adding React frontend](#adding-react-frontend)
-    - [Add necessary libraries](#add-necessary-libraries)
-      - [React-bootstrap](#react-bootstrap)
-      - [Formik + yup](#formik--yup)
 
 ## Setup
 
@@ -1337,39 +1344,4 @@ docker run -it --rm --name react-frontend -p 3000:3000 -v $(pwd):/react-frontend
 ```
 
 After that the docker-compose.yml and react.Dockerfile can be changed (to the present version)
-
-### Add necessary libraries
-
-sh in:
-
-```
-docker exec -it laravel-in-docker-new-react-frontend-1 sh
-```
-
-Then, add React Router, React Bootstrap, Axios, Formik + Yup
-```
-npm i react-router-dom
-npm install react-bootstrap bootstrap
-npm install axios
-npm install formik --save
-npm install yup --save
-```
-
-#### React-bootstrap
-
-include in the src/index.js or App.js file
-
-```js
-import 'bootstrap/dist/css/bootstrap.min.css';
-```
-
-#### Formik + yup
-
-Data sanitization needed to be added to ensure empty strings are added as null
-The formik styles needed to be imported separately, css should be modified so that it will be less ugly in the future.
-
-Formik regular expressions need to be cleaned
-
-
-
 
