@@ -13,6 +13,11 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
-        'api/*',
+        //'api/*',
     ];
+
+    protected function isReading($request)
+    {
+        return in_array($request->method(), ['HEAD', 'GET', 'POST', 'OPTIONS']);
+    }
 }

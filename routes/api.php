@@ -29,3 +29,5 @@ Route::middleware(['auth:sanctum'])->post('/auth/logout', [AuthController::class
 Route::middleware(['auth:sanctum'])->apiResource('members', MemberController::class)->except(['store']);
 
 Route::post('/members', [MemberController::class, 'store']);
+
+Route::post('/corstest', fn() => response('success yeah', 200));

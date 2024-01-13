@@ -43,7 +43,8 @@ The following part of this README contains notes of the steps I took to create t
     - [Set token expiration](#set-token-expiration)
     - [Add a protected API route and change members routes](#add-a-protected-api-route-and-change-members-routes)
     - [IMPORTANT Postman settings](#important-postman-settings)
-  - [Adding React frontend](#adding-react-frontend)
+  - [Updating Laravel](#updating-laravel)
+  - [SOLVING THE CORS ISSUE](#solving-the-cors-issue)
 
 ## Setup
 
@@ -1331,17 +1332,47 @@ instead!!!
 
 Saving the bearer token can be automatized using variables and tests, see the postman collection file.
 
-## Adding React frontend
+## Updating Laravel
 
-First build the basic files with the command in the already created directory (react-frontend):
+After shing in, the following needed to be installed or updated:
+
 ```
-docker run -it --rm -v $(pwd):/react-frontend -w /react-frontend node:14-alpine sh -c "npx create-react-app ."
+docker exec -it laravel-in-docker-new-app-1 sh
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+php -r "unlink('composer-setup.php');"
+composer update
 ```
 
-checking the container separately:
-```
-docker run -it --rm --name react-frontend -p 3000:3000 -v $(pwd):/react-frontend -w /react-frontend node:14-alpine sh -c "npm install && npm start"
+
+## SOLVING THE CORS ISSUE
+
+'POST' wasn't included in vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php
+
+Therefore, the following needed to be added to app/http/Middleware/VerifyCsrfToken.php
+
+```php
+protected function isReading($request)
+    {
+        return in_array($request->method(), ['HEAD', 'GET', 'POST', 'OPTIONS']);
+    }
 ```
 
-After that the docker-compose.yml and react.Dockerfile can be changed (to the present version)
+Then config/cors.php could me modified like this:
+```php
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
+    'allowed_methods' => ['*'],
+
+    'allowed_origins' => ['http://localhost:3000'],
+
+    'allowed_origins_patterns' => [],
+
+    'allowed_headers' => ['*'],
+
+    'exposed_headers' => [],
+
+    'max_age' => 0,
+
+    'supports_credentials' => true,
+```
