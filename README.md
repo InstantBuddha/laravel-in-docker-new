@@ -45,6 +45,9 @@ The following part of this README contains notes of the steps I took to create t
     - [IMPORTANT Postman settings](#important-postman-settings)
   - [Updating Laravel](#updating-laravel)
   - [SOLVING THE CORS ISSUE](#solving-the-cors-issue)
+  - [Solving the redirection issue](#solving-the-redirection-issue)
+  - [Testing issue](#testing-issue)
+  - [Set up PHP CS Fixer](#set-up-php-cs-fixer)
 
 ## Setup
 
@@ -1376,3 +1379,96 @@ Then config/cors.php could me modified like this:
 
     'supports_credentials' => true,
 ```
+## Solving the redirection issue
+
+When the user wants to access an api route from the web browser, they need to be redirected. The routes did not work for redirection, but this does:
+In Authenticate.php in App\Http\Middleware I changed:
+
+```php
+protected function redirectTo(Request $request): ?string
+    {
+        return $request->expectsJson() ? null : abort(401); //Marking it not to forget
+    }
+```
+
+## Testing issue
+
+This did not work for two reasons:
+- I got 200 not 401 because it seemed that the now time in newAttempt seemed to be unaffected by the time change
+- Furthermore, I even got 200 when deliberately messed up the token content.
+
+```php
+public function test_expired_token()
+    {
+        $user = User::create([
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => bcrypt('reallySecretPassword123'),
+        ]);
+
+        $loginResponse = $this->json('POST', '/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'reallySecretPassword123',
+        ]);
+        //var_dump($loginResponse);
+        $responseContent = json_decode($loginResponse->getContent(), true);
+        $token = $responseContent['authorization']['token'];
+        var_dump('Current time:', Carbon::now()->toDateTimeString());
+        var_dump('Token:', $token);
+
+        
+        $loginResponse->assertStatus(200);
+
+        /*$expiredTime = Carbon::now()->addMinutes(1111440);
+
+        $expiredTime->setTimezone('UTC');
+        Carbon::setTestNow($expiredTime);
+        */
+        //Carbon::setTestNow(now()->addMinutes(111120));
+        $this->travel(111120)->minutes();
+
+        var_dump('Modified time:', Carbon::now()->toDateTimeString());
+
+        $newAttempt = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Accept' => 'application/json',
+        ])->get('/api/auth/something');
+        //$response = $this->get('/api/auth/something');
+
+        var_dump($newAttempt);
+        $newAttempt->assertStatus(401);
+
+        // Reset the test time
+        Carbon::setTestNow();
+    }
+```
+## Set up PHP CS Fixer
+
+sh in and do the following:
+```
+docker exec -it laravel-in-docker-new-app-1 sh
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('sha384', 'composer-setup.php') === 'e21205b207c3ff031906575712edab6f13eb0b361f2085f1f1237b7126d785e826a450292b6cfd1d64d92e6563bbde02') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+mv composer.phar /usr/local/bin/composer
+composer require --dev friendsofphp/php-cs-fixer
+```
+
+Then I ran (although it just moved stuff)
+```
+curl -sS https://getcomposer.org/installer | php
+./composer.phar require friendsofphp/php-cs-fixer
+```
+
+In the VsCode extension I could do the following:
+Find the executablePath setting and set it to the absolute path of the php-cs-fixer executable in your Docker container. 
+It was: 
+/home/dan/NEW_PROGRAMMING/laravel-in-docker-new/vendor/bin/php-cs-fixer
+
+Then, in the root folder of the project, I created a file called .php-cs-fixer.php
+
+and for the ruleset, I added the contents of this:
+https://gist.github.com/laravel-shift/cab527923ed2a109dda047b97d53c200#file-php-cs-fixer-php
+
+It works like... who knows
