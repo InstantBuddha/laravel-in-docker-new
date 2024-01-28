@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\MemberController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//It seems that if I don't need authentication, I just simply add my route. MemberController can be imported automatically.
+Route::post('/auth/login', [AuthController::class, 'login']);
 
-Route::apiResource('members', MemberController::class);
+Route::middleware(['auth:sanctum'])->get('/auth/something', [AuthController::class, 'something']);
+
+Route::middleware(['auth:sanctum'])->post('/auth/logout', [AuthController::class, 'logout']);
+
+Route::middleware(['auth:sanctum'])->apiResource('members', MemberController::class)->except(['store']);
+
+Route::post('/members', [MemberController::class, 'store']);
+
+Route::post('/corstest', fn() => response('success yeah', 200));

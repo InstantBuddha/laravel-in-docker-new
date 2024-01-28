@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Mail\WelcomeEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 
-class Member extends Model
-{
+class Member extends Model {
     use HasFactory;
 
     protected $fillable = [
@@ -20,6 +21,11 @@ class Member extends Model
         'address',
         'comment',
         'mailing_list',
-        'email_verified_at',
     ];
+
+    protected static function booted(): void {
+        static::created(function (Member $member) {
+            Mail::send(new WelcomeEmail($member));
+        });
+    }
 }

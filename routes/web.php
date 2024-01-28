@@ -1,6 +1,9 @@
 <?php
 
+use App\Mail\WelcomeEmail;
+use App\Models\Member;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,9 +18,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     //return view('welcome');
-    return 'Hello World';
+    return 'Hello World HOME';
 });
 
 Route::get('/greeting', function () {
     return 'Hello World';
+});
+
+Route::get('/testemail', function () {
+    $exampleMember = Member::factory()->make();
+
+    Mail::send(new WelcomeEmail($exampleMember));
+    return 'Test email sent';
 });

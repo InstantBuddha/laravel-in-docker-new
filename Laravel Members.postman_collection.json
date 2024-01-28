@@ -7,60 +7,6 @@
 	},
 	"item": [
 		{
-			"name": "POST add basic info only",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json",
-						"description": "text",
-						"type": "text"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json",
-						"description": "text",
-						"type": "text"
-					}
-				],
-				"url": {
-					"raw": "http://localhost/api/members?name=Jack Jones&email=jack@example.com&phone_number=123456789&mailing_list=0&city=CityCityx",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"path": [
-						"api",
-						"members"
-					],
-					"query": [
-						{
-							"key": "name",
-							"value": "Jack Jones"
-						},
-						{
-							"key": "email",
-							"value": "jack@example.com"
-						},
-						{
-							"key": "phone_number",
-							"value": "123456789"
-						},
-						{
-							"key": "mailing_list",
-							"value": "0"
-						},
-						{
-							"key": "city",
-							"value": "CityCityx"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "POST add all info",
 			"request": {
 				"method": "POST",
@@ -78,8 +24,53 @@
 						"type": "text"
 					}
 				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Joe Jack",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "joejack@jggg.kss",
+							"type": "text"
+						},
+						{
+							"key": "phone_number",
+							"value": "0036123456789",
+							"type": "text"
+						},
+						{
+							"key": "zipcode",
+							"value": "1123",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "Budipest",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "11 Something street",
+							"type": "text"
+						},
+						{
+							"key": "comment",
+							"value": "Lorem ipsum something longgggggggggggggggggggggggggggggggggggggggggggggggg",
+							"type": "text"
+						},
+						{
+							"key": "mailing_list",
+							"value": "0",
+							"type": "text"
+						}
+					]
+				},
 				"url": {
-					"raw": "http://localhost/api/members?name=Jack Jude&email=joed@example.com&phone_number=0123456789&zipcode=1199&city=CityCityx&address=8690 Raegan Inlet Apt&comment=Ipsam aspernatur possimus voluptatem voluptates laboriosam aut. Exercitationem velit eos sequi.&mailing_list=0",
+					"raw": "http://localhost/api/members",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -91,35 +82,43 @@
 					"query": [
 						{
 							"key": "name",
-							"value": "Jack Jude"
+							"value": "gffghg Pesrssssondsaa",
+							"disabled": true
 						},
 						{
 							"key": "email",
-							"value": "joed@example.com"
+							"value": "cvcvfg@ampsle.mds",
+							"disabled": true
 						},
 						{
 							"key": "phone_number",
-							"value": "0123456789"
+							"value": "0123456789",
+							"disabled": true
 						},
 						{
 							"key": "zipcode",
-							"value": "1199"
+							"value": "1234",
+							"disabled": true
 						},
 						{
 							"key": "city",
-							"value": "CityCityx"
+							"value": "No empty strings",
+							"disabled": true
 						},
 						{
 							"key": "address",
-							"value": "8690 Raegan Inlet Apt"
+							"value": "11 Street 11/a",
+							"disabled": true
 						},
 						{
 							"key": "comment",
-							"value": "Ipsam aspernatur possimus voluptatem voluptates laboriosam aut. Exercitationem velit eos sequi."
+							"value": "YYYIpsam  possimus voluptatem voluptates laboriosam aut. ",
+							"disabled": true
 						},
 						{
 							"key": "mailing_list",
-							"value": "0"
+							"value": "0",
+							"disabled": true
 						}
 					]
 				}
@@ -127,10 +126,150 @@
 			"response": []
 		},
 		{
-			"name": "GET all members",
+			"name": "POST add all info Copy",
 			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": "text",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "text",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Joe Jack",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "joejack@jggg.kss",
+							"type": "text"
+						},
+						{
+							"key": "phone_number",
+							"value": "0036123456789",
+							"type": "text"
+						},
+						{
+							"key": "zipcode",
+							"value": "1123",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "Budipest",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "11 Something street",
+							"type": "text"
+						},
+						{
+							"key": "comment",
+							"value": "Lorem ipsum something longgggggggggggggggggggggggggggggggggggggggggggggggg",
+							"type": "text"
+						},
+						{
+							"key": "mailing_list",
+							"value": "0",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/api/members",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"members"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "gffghg Pesrssssondsaa",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "cvcvfg@ampsle.mds",
+							"disabled": true
+						},
+						{
+							"key": "phone_number",
+							"value": "0123456789",
+							"disabled": true
+						},
+						{
+							"key": "zipcode",
+							"value": "1234",
+							"disabled": true
+						},
+						{
+							"key": "city",
+							"value": "No empty strings",
+							"disabled": true
+						},
+						{
+							"key": "address",
+							"value": "11 Street 11/a",
+							"disabled": true
+						},
+						{
+							"key": "comment",
+							"value": "YYYIpsam  possimus voluptatem voluptates laboriosam aut. ",
+							"disabled": true
+						},
+						{
+							"key": "mailing_list",
+							"value": "0",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET all members (with authentication)",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "http://localhost/api/members",
 					"protocol": "http",
@@ -146,12 +285,33 @@
 			"response": []
 		},
 		{
-			"name": "GET one member",
+			"name": "GET one member (with authentication)",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "http://localhost/api/members/2",
+					"raw": "http://localhost/api/members/12",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -159,7 +319,139 @@
 					"path": [
 						"api",
 						"members",
-						"2"
+						"12"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log in User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"pm.environment.set(\"bearerToken\", jsonData.authorization.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "testerone@example.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "testPassword",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get something authenticated only",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/api/auth/something",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"auth",
+						"something"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log user out",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{bearerToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost/api/auth/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"auth",
+						"logout"
 					]
 				}
 			},

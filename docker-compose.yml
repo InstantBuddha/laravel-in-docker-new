@@ -1,38 +1,54 @@
 version: "3"
 services:
-  app:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    container_name: laravel-in-docker-new-app-1
-    working_dir: /app
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - web
-      - db  
-  web:
-    image: nginx:alpine
-    container_name: laravel-in-docker-new-web-1
-    ports:
-      - "80:80"
-    volumes:
-      - .:/app
-      - ./nginx-config:/etc/nginx/conf.d # Mount a directory for custom Nginx configuration
-  db:
-    image: mysql:8.1
-    container_name: laravel-in-docker-new-db-1
-    environment:
-      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_DATABASE: '${DB_DATABASE}'
-      MYSQL_PASSWORD: '${DB_PASSWORD}'
-      MYSQL_ALLOW_EMPTY_PASSWORD: 0
-    volumes:
-      - db-data:/var/lib/mysql
-    ports:
-      - 3306:3306
+    app:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        container_name: laravel-in-docker-new-app-1
+        working_dir: /app
+        volumes:
+            - .:/app
+        ports:
+            - "8000:8000"
+        depends_on:
+            - web
+            - db
+        networks:
+            - laravel-in-docker-new-network
+    web:
+        image: nginx:alpine
+        container_name: laravel-in-docker-new-web-1
+        ports:
+            - "80:80"
+        volumes:
+            - .:/app
+            - ./nginx-config:/etc/nginx/conf.d
+        networks:
+            - laravel-in-docker-new-network
+    db:
+        image: mysql:8.1
+        container_name: laravel-in-docker-new-db-1
+        environment:
+            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_DATABASE: "${DB_DATABASE}"
+            MYSQL_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_ALLOW_EMPTY_PASSWORD: 0
+        volumes:
+            - db-data:/var/lib/mysql
+        ports:
+            - 3306:3306
+        networks:
+            - laravel-in-docker-new-network
+    mailcatcher:
+        image: schickling/mailcatcher
+        container_name: laravel-in-docker-new-mailcatcher-1
+        ports:
+            - "1080:1080"
+            - "1025:1025"
+        networks:
+            - laravel-in-docker-new-network
 volumes:
-  db-data:
+    db-data:
+networks:
+    laravel-in-docker-new-network:
