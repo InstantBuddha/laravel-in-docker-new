@@ -16,10 +16,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->get('/auth/something', [AuthController::class, 'something']);
@@ -28,6 +24,8 @@ Route::middleware(['auth:sanctum'])->post('/auth/logout', [AuthController::class
 
 Route::middleware(['auth:sanctum'])->apiResource('members', MemberController::class)->except(['store']);
 
-Route::post('/members', [MemberController::class, 'store']);
+Route::post('/register-new-member', [MemberController::class, 'store']);
 
 Route::post('/corstest', fn() => response('success yeah', 200));
+
+Route::get('/ping', static fn() => 'pong');

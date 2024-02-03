@@ -6,7 +6,6 @@ namespace App\Mail;
 
 use App\Models\Member;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Address;
@@ -18,34 +17,32 @@ class WelcomeEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(public Member $member)
+    public function __construct(protected Member $member)
     {
         //
     }
 
-    /**
-     * Get the message envelope.
-     */
+    public function getMember(): Member
+    {
+        return $this->member;
+    }
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: Config::get('mail.from.address', 'mail.from.name'),
-            to: $this->member->email,
-            subject: 'Welcome Email',
+            from: new Address(Config::get('mail.from.address'), Config::get('mail.from.name')),
+            to: $this->getMember()->email,
             bcc: Config::get('mail.bcc'),
+            subject: 'Welcome Email',
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
             markdown: 'emails.welcome',
+            with: [
+                'member' => $this->getMember(),
+            ],
         );
     }
 

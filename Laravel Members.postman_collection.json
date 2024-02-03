@@ -8,6 +8,145 @@
 	"item": [
 		{
 			"name": "POST add all info",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true,
+					"user-agent": true,
+					"accept-encoding": true,
+					"connection": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"description": "text",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "text",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Host",
+						"value": "localhost",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Joe Jack",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "new346578@jggg.kss",
+							"type": "text"
+						},
+						{
+							"key": "phone_number",
+							"value": "0036123456789",
+							"type": "text"
+						},
+						{
+							"key": "zipcode",
+							"value": "1123",
+							"type": "text"
+						},
+						{
+							"key": "city",
+							"value": "Budipest",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "11 Something street",
+							"type": "text"
+						},
+						{
+							"key": "comment",
+							"value": "Lorem ipsum something longgggggggggggggggggggggggggggggggggggggggggggggggg",
+							"type": "text"
+						},
+						{
+							"key": "is_subscribed_to_mailing_list",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "consent",
+							"value": "true",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost/api/register-new-member",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"register-new-member"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "gffghg Pesrssssondsaa",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "cvcvfg@ampsle.mds",
+							"disabled": true
+						},
+						{
+							"key": "phone_number",
+							"value": "0123456789",
+							"disabled": true
+						},
+						{
+							"key": "zipcode",
+							"value": "1234",
+							"disabled": true
+						},
+						{
+							"key": "city",
+							"value": "No empty strings",
+							"disabled": true
+						},
+						{
+							"key": "address",
+							"value": "11 Street 11/a",
+							"disabled": true
+						},
+						{
+							"key": "comment",
+							"value": "YYYIpsam  possimus voluptatem voluptates laboriosam aut. ",
+							"disabled": true
+						},
+						{
+							"key": "mailing_list",
+							"value": "0",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "check csrf-cookie",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -70,14 +209,14 @@
 					]
 				},
 				"url": {
-					"raw": "http://localhost/api/members",
+					"raw": "http://localhost/api/corstest",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"api",
-						"members"
+						"corstest"
 					],
 					"query": [
 						{
@@ -148,12 +287,12 @@
 					"formdata": [
 						{
 							"key": "name",
-							"value": "Joe Jack",
+							"value": "Joe Jack Jr",
 							"type": "text"
 						},
 						{
 							"key": "email",
-							"value": "joejack@jggg.kss",
+							"value": "joejacdkjr@jggg.ksss",
 							"type": "text"
 						},
 						{
@@ -169,34 +308,37 @@
 						{
 							"key": "city",
 							"value": "Budipest",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "address",
 							"value": "11 Something street",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
 							"key": "comment",
 							"value": "Lorem ipsum something longgggggggggggggggggggggggggggggggggggggggggggggggg",
-							"type": "text"
+							"type": "text",
+							"disabled": true
 						},
 						{
-							"key": "mailing_list",
+							"key": "is_subscribed_to_mailing_list",
 							"value": "0",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost/api/members",
+					"raw": "http://localhost/api/register-new-member",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"path": [
 						"api",
-						"members"
+						"register-new-member"
 					],
 					"query": [
 						{
@@ -333,18 +475,27 @@
 					"script": {
 						"exec": [
 							"var jsonData = JSON.parse(responseBody);",
-							"pm.environment.set(\"bearerToken\", jsonData.authorization.token);"
+							"console.log(jsonData);",
+							"pm.environment.set(\"bearerToken\", jsonData.token);"
 						],
 						"type": "text/javascript"
 					}
 				}
 			],
 			"protocolProfileBehavior": {
-				"disabledSystemHeaders": {}
+				"disabledSystemHeaders": {
+					"accept": true
+				}
 			},
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "formdata",
 					"formdata": [
@@ -452,6 +603,25 @@
 						"api",
 						"auth",
 						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/api/ping",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"ping"
 					]
 				}
 			},

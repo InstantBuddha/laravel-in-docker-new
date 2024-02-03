@@ -27,7 +27,7 @@ Address: {{$member->address}}
 Your comment: {{$member->comment}}
 
 @endif
-@if($member->mailing_list)
+@if($member->is_subscribed_to_mailing_list)
 You have chosen to receive our newsletter.
 
 @endif
