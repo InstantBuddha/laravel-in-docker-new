@@ -16,16 +16,26 @@ class MemberFactory extends Factory
 {
     public function definition(): array
     {
-        return [
+        $memberProperties = [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'phone_number' => fake()->phoneNumber,
             'is_subscribed_to_mailing_list' => fake()->boolean,
             'email_verified_at' => now(),
-            'zipcode' => fake()->optional()->postcode,
-            'city' => fake()->optional()->city,
-            'address' => fake()->optional()->address,
-            'comment' => fake()->optional()->text,
         ];
+
+        if (fake()->boolean(60)) {
+            return array_merge(
+                $memberProperties,
+                [
+                    'zipcode' => fake()->postcode,
+                    'city' => fake()->city,
+                    'address' => fake()->address,
+                    'comment' => fake()->text,
+                ]
+            );
+        }
+
+        return $memberProperties;
     }
 }

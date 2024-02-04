@@ -36,10 +36,8 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out',]);
     }
 
-    public function something(Request $request)
+    public function authTest(Request $request)
     {
-        return response()->json([
-            'message' => 'Something happened successfully',
-        ]);
+        return response()->json();
     }
 }

@@ -49,7 +49,7 @@
 						},
 						{
 							"key": "email",
-							"value": "new346578@jggg.kss",
+							"value": "new3465789@jggg.kss",
 							"type": "text"
 						},
 						{
@@ -527,7 +527,7 @@
 			"response": []
 		},
 		{
-			"name": "get something authenticated only",
+			"name": "authTest",
 			"protocolProfileBehavior": {
 				"disabledSystemHeaders": {
 					"accept": true
@@ -553,7 +553,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost/api/auth/something",
+					"raw": "http://localhost/api/auth/auth_test",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -561,7 +561,7 @@
 					"path": [
 						"api",
 						"auth",
-						"something"
+						"auth_test"
 					]
 				}
 			},

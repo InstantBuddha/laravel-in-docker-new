@@ -20,13 +20,14 @@ The following part of this README contains notes of the steps I took to create t
   - [Creating API endpoint to view members](#creating-api-endpoint-to-view-members)
   - [Adding new members](#adding-new-members)
   - [Volume problem](#volume-problem)
-  - [Adding some rules to StoreMemberRequest](#adding-some-rules-to-storememberrequest)
   - [Create tests](#create-tests)
   - [Emails: Make:mail](#emails-makemail)
       - [Undo the Mistaken Action:](#undo-the-mistaken-action)
     - [Creating the envelope](#creating-the-envelope)
     - [Changing the official Laravel email template](#changing-the-official-laravel-email-template)
   - [Solving the bind mount permission issue](#solving-the-bind-mount-permission-issue)
+    - [Changing permissions after the problem has arisen](#changing-permissions-after-the-problem-has-arisen)
+    - [Preventing the problem](#preventing-the-problem)
   - [Adding mailcathcher](#adding-mailcathcher)
   - [Events](#events)
   - [Testing Emails](#testing-emails)
@@ -73,51 +74,10 @@ After that in sh:
 php artisan make:migration create_members_table
 ```
 
-Modified the newest migration:
-
-```php
-<?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('members', function (Blueprint $table) {
-        $table->id();
-        $table->string('name');
-        $table->string('email')->unique();
-        $table->string('phone_number'); 
-        $table->string('zipcode')->nullable();
-        $table->string('city')->nullable(); 
-        $table->text('address')->nullable();
-        $table->text('comment')->nullable(); 
-        $table->boolean('mailing_list')->nullable(); 
-        $table->timestamp('email_verified_at')->nullable();
-        $table->timestamps();
-        });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('members');
-    }
-};
-```
-
-AND then:
+Modified the newest migration AND then:
 
 ```sh
-   php artisan migrate
+php artisan migrate
 ```
 
 ## Create a Model:
@@ -168,53 +128,7 @@ It creates a factory in database\factories\
 php artisan make:factory MemberFactory --model=Member
 ```
 
-The modified factory (done by hand)
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace Database\Factories;
-
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\Member;
-
-
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Member>
- */
-class MemberFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        $memberProperties = [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'phone_number' => fake()->phoneNumber,
-            'mailing_list' => fake()->boolean,
-            'email_verified_at' => now(),
-        ];
-
-        if (fake()->boolean(60)) {
-            return array_merge($memberProperties,
-                ['zipcode' => fake()->postcode,
-                    'city' => fake()->city,
-                    'address' => fake()->address,
-                    'comment' => fake()->text,]
-            );
-        }
-
-        return $memberProperties;
-    }
-}
-```
+Then modified it
 
 ## Create a Seeder:
 
@@ -222,31 +136,9 @@ class MemberFactory extends Factory
 php artisan make:seeder MemberSeeder
 ```
 
-then modified \database\migrations\MemberSeeder.php like this:
+then modified \database\migrations\MemberSeeder.php 
 
-```php
-<?php
-
-namespace Database\Seeders;
-
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use App\Models\Member;
-
-class MemberSeeder extends Seeder
-{
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void
-    {
-        Member::factory()->count(20)->create();
-    }
-}
-
-```
-
-defined the seeder and then
+and then
 
 ```sh
 php artisan db:seed --class=MemberSeeder
@@ -373,87 +265,7 @@ You can verify that the data has been created in your database by querying the `
    ```sh
    php artisan make:request StoreMemberRequest
    ```
-   And modify it so that it looks like this (later regexp needs to be added):
-
-   ```php
-    <?php
-
-    namespace App\Http\Requests;
-
-    use Illuminate\Foundation\Http\FormRequest;
-
-    class StoreMemberRequest extends FormRequest
-    {
-        /**
-         * Determine if the user is authorized to make this request.
-         */
-        public function authorize(): bool
-        {   
-            return true;    //supposedly this needs to be true instead
-        }
-
-        /**
-         * Get the validation rules that apply to the request.
-         *
-         * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-         */
-        public function rules(): array
-        {
-            return [
-                'name' => ['required', 'string', 'min:3'],
-                'email' => ['required', 'email'],
-               'phone_number' => ['required', 'string'],
-                'zipcode' => ['string'],
-                'city' => ['string'],
-                'address' => ['string'],
-                'comment' => ['string'],
-                'mailing_list' => ['required', 'boolean'],
-            ];
-        }
-    }
-
-   ```
-2. Implement the method in the MemberController
-
-    Now MemberController.php looks like this, although it would be a good idea to add feedback if the action was successful or not.
-
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-use App\Http\Requests\StoreMemberRequest;
-use App\Models\Member;
-use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Symfony\Component\HttpFoundation\Response;
-
-class MemberController extends Controller
-{
-    public function index(): AnonymousResourceCollection
-    {
-        return JsonResource::collection(Member::all());
-    }
-
-    public function show(string $id): JsonResource|Response
-    {
-        try{
-            return new JsonResource(Member::findOrFail($id));
-        } catch (Exception) {
-            return response(null, Response::HTTP_NOT_FOUND);
-        }
-    }
-
-    public function store(StoreMemberRequest $request): JsonResource
-    {
-        $member = Member::create($request->all());
-        return new JsonResource($member);
-    }
-}
-
-```
+   
 
 3. Define the route
 
@@ -523,48 +335,6 @@ SELECT * FROM members;
 
 The problem was solved by creating a Dockerfile and adding docker-php-ext-install pdo pdo_mysql during build.
 
-## Adding some rules to StoreMemberRequest
-
-I removed the regular expressions as they were not needed:
-
-```php
-<?php
-
-namespace App\Http\Requests;
-
-use Illuminate\Foundation\Http\FormRequest;
-
-class StoreMemberRequest extends FormRequest
-{
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        return true; //supposedly this needs to be true instead
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        return [
-            'name' => ['required', 'string', 'min:8'],
-            'email' => ['required', 'email', 'min:8'],
-            'phone_number' => ['required', 'string', 'min:7', 'max:20'],
-            'zipcode' => ['string', 'max:15'],
-            'city' => ['string', 'max:30'],
-            'address' => ['string', 'max:50'],
-            'comment' => ['string', 'max:250'],
-            'mailing_list' => ['required', 'boolean'],
-        ];
-    }
-}
-```
-
 ## Create tests
 
 First bash in and create MemberTest:
@@ -580,70 +350,6 @@ In app\Http\Controllers there is MemberController that has three functions:
 - show(string $id)
 - store(StoreMemberRequest $request)
 We can write test cases for these.
-
-Then write the test cases:
-MemberTest.php looks like this after wtiting the index testcase:
-
-```php
-<?php
-
-namespace Tests\Feature;
-
-use App\Models\Member;
-use Illuminate\Foundation\Testing\RefreshDatabase;    //This would reset the database, so if entries were present when testing, they would be lost.
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-
-class MemberTest extends TestCase
-{
-    use RefreshDatabase;
-    private const BASE_ENDPOINT = '/api/members/';
-
-    public function testMember_index(): void
-    {
-        $members = Member::factory()->count(3)->create();
-        $memberIds = $members->map(fn(Member $member) => $member->id)->toArray();
-        $response = $this->get(self::BASE_ENDPOINT)->json('data');
-        $this->assertCount($members->count(), $response); //for empty database
-        
-        foreach ($response as $responseMember) {
-            $this->assertContains($responseMember['id'], $memberIds);
-        }
-    }
-    
-    public function testMember_store(): void 
-    {
-        $member = Member::factory()->make();
-        $response = $this->post(self::BASE_ENDPOINT, $member->toArray())->json('data');
-        $this->assertNotNull($response['id']);
-        $this->assertEquals($member->name, $response['name']);
-        $this->assertEquals($member->email, $response['email']); 
-        $this->assertEquals($member->phone_number, $response['phone_number']);
-    }
-
-    public function testMember_show(): void
-    {
-        $member = Member::factory()->count(3)->create()->random();
-        $response = $this->get(self::BASE_ENDPOINT . $member->id)->json('data');
-        $this->assertEquals($member->id, $response['id']); 
-        $this->assertEquals($member->name, $response['name']);
-        $this->assertEquals($member->email, $response['email']);
-        $this->assertEquals($member->phone_number, $response['phone_number']);
-    }
-    
-    
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
-}
-
-```
 
 Then run the test:
 
@@ -696,38 +402,6 @@ you may specify a global "from" address in your config/mail.php configuration fi
 
 Here, it uses the .env values IF PRESENT. As the reply_to value is not set there, Laravel uses the value that is set here in config/mail.php
 
-```php
-    'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'fallback_set_in_mail_php@example.hu'),
-        'name' => env('MAIL_FROM_NAME', 'FallbackNameSet InMailPhp'),
-    ],
-    
-    'reply_to' => [
-        'address' => env('MAIL_REPLY_TO_ADDRESS', 'fallback_replyto_set_in_mail_php@example.hu'),
-        'name' => env('MAIL_REPLY_TO_NAME', 'FallbackNameSet InMailPhp'),
-    ],
-    'bcc' => [
-        env('MAIL_BCC_ADDRESS_1', 'fallback_bcc1_set_in_mail_php@example.hu'),
-        env('MAIL_BCC_ADDRESS_2', 'fallback_bcc2_set_in_mail_php@example.hu'),
-    ],
-```
-
-In WelcomeEmail.php the envelope looked like this in the end:
-
-```php
-public function envelope(): Envelope
-    {
-        return new Envelope(
-            from: env('MAIL_FROM_ADDRESS', 'MAIL_FROM_NAME'),
-            to: $this->member->email,
-            subject: 'Welcome Email',
-            bcc: [
-                env('MAIL_BCC_ADDRESS_1'),
-                env('MAIL_BCC_ADDRESS_2'),
-            ],
-        );
-    }
-```
 
 ### Changing the official Laravel email template
 
@@ -742,6 +416,8 @@ The above command will copy the email views to your project's resources/views/ve
 **The templates are different for HTML and for plain text!**
 
 ## Solving the bind mount permission issue
+
+### Changing permissions after the problem has arisen
 
 If files are created by a container, they require sudo to be changed, unless we set the permissions:
 
@@ -764,6 +440,27 @@ sudo chmod o+rx MailableTest.php
 
 sudo chown dan:dan MailableTest.php
 ```
+
+### Preventing the problem
+
+in the .env create the variables:
+```.env
+WWWGROUP=1000
+WWWUSER=1000
+```
+
+In the Dockerfile or docker-compose.yml add:
+```.yml
+services:
+    laravel.test:
+        build:
+            context: ./vendor/laravel/sail/runtimes/8.3
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+...other stuff                
+```
+
 
 ## Adding mailcathcher
 
@@ -968,67 +665,7 @@ Working with this:
 
 https://laravel.com/docs/10.x/mail#testing-mailable-content
 
-In the end the test for the mailable looks like this:
 
-```php
-public function test_mailable_content(): void
-    {
-        Mail::fake();
-
-        $member = Member::factory()->make();
-
-        $mailable = new WelcomeEmail($member);
-
-        Mail::send($mailable);
-
-        Mail::assertSent(WelcomeEmail::class, function (WelcomeEmail $mail) use ($member) {
-            $mail->hasTo($member->email);
-            $mail->hasFrom('set_in_env@example.hu', 'OurName SetInDotEnv');
-            $mail->hasReplyTo('replyToAddress@inmailphp.com', 'OurReplyToAddress InMailPhp');
-            $mail->hasSubject('Welcome Email');
-            return true;
-        });
-
-        $mailable->assertSeeInHtml($member->name);
-        $mailable->assertSeeInHtml($member->phone_number);
-        $mailable->assertSeeInHtml('Successful registration');
-        $mailable->assertSeeInHtml('árvíztűrő tükörfúrógép');
-        $mailable->assertSeeInHtml('A hardcoded company name');
-        if($member->address){
-            $mailable->assertSeeInHtml($member->address);
-        }
-        if($member->comment){
-            $mailable->assertSeeInHtml($member->comment);
-        }
-        if($member->mailing_list){
-            $mailable->assertSeeInHtml('You have chosen to receive our newsletter.');
-        }
-        $mailable->assertSeeInText($member->name);
-        $mailable->assertSeeInText($member->phone_number);
-        $mailable->assertSeeInText('Successful registration');
-        $mailable->assertSeeInText('árvíztűrő tükörfúrógép');
-        $mailable->assertSeeInText('A hardcoded company name');
-        if($member->address){
-            $mailable->assertSeeInText($member->address);
-        }
-        if($member->comment){
-            $mailable->assertSeeInText($member->comment);
-        }
-        if($member->mailing_list){
-            $mailable->assertSeeInText('You have chosen to receive our newsletter.');
-        }
-    }
-```
-
-For testing by hand the following was added to web.php
-```php
-Route::get('/testemail', function () {
-    $exampleMember = Member::factory()->make();
-    
-    Mail::send(new WelcomeEmail($exampleMember));
-    return 'Test email sent';
-});
-```
 ## Adding a closure
 
 Working based on this:
@@ -1113,47 +750,6 @@ https://laravel.com/docs/10.x/routing#rate-limiting
 Official documentation:
 https://laravel.com/docs/10.x/http-tests
 
-In the end, the test looks like this:
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace Tests\Feature;
-
-use App\Models\Member;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-
-class RateLimitingTest extends TestCase
-{
-    use RefreshDatabase;
-
-    private const BASE_ENDPOINT = '/api/members/';
-    private const RATE_LIMIT = 60;
-
-    public function test_rate_limit()
-    {
-        for ($i = 1; $i <= self::RATE_LIMIT; $i++) {
-            $member = Member::factory()->make();
-            $this->withMiddleware(['api']);
-            $response = $this->post(self::BASE_ENDPOINT, $member->toArray())
-                ->assertCreated()
-                ->assertHeader('X-Ratelimit-Limit', self::RATE_LIMIT)
-                ->assertHeader('X-Ratelimit-Remaining', self::RATE_LIMIT - $i);
-        }
-
-        $member = Member::factory()->make();
-        $this->withMiddleware(['api']);
-        $response = $this->post(self::BASE_ENDPOINT, $member->toArray())
-            ->assertStatus(429);
-    }
-
-}
-
-```
-
 ## Add authentication
 
 Following this (which turns out to be partly bad information):
@@ -1194,53 +790,6 @@ sudo chmod g+rx AuthController.php
 sudo chmod o+rx AuthController.php
 
 sudo chown dan:dan AuthController.php
-```
-
-Modify it like this:
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Http\Controllers\API;
-
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
-class AuthController extends Controller
-{
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum', ['except' => ['login',]]);
-    }
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        $credentials = $request->only('email', 'password');
-        
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            return response()->json([
-                'user' => $user,
-                'authorization' => [
-                    'token' => $user->createToken('ApiToken')->plainTextToken,
-                    'type' => 'bearer',
-                ]
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'Invalid credentials'
-        ], 401);
-    }
-}
 ```
 
 At this point, with an empty post request like this:
@@ -1333,7 +882,7 @@ In Headers uncheck Accept */* and add
 Accept application/json
 instead!!!
 
-Saving the bearer token can be automatized using variables and tests, see the postman collection file.
+Saving the bearer token can be **automatized** using variables and tests, see the postman collection file.
 
 ## Updating Laravel
 
@@ -1397,51 +946,6 @@ This did not work for two reasons:
 - I got 200 not 401 because it seemed that the now time in newAttempt seemed to be unaffected by the time change
 - Furthermore, I even got 200 when deliberately messed up the token content.
 
-```php
-public function test_expired_token()
-    {
-        $user = User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => bcrypt('reallySecretPassword123'),
-        ]);
-
-        $loginResponse = $this->json('POST', '/api/auth/login', [
-            'email' => $user->email,
-            'password' => 'reallySecretPassword123',
-        ]);
-        //var_dump($loginResponse);
-        $responseContent = json_decode($loginResponse->getContent(), true);
-        $token = $responseContent['authorization']['token'];
-        var_dump('Current time:', Carbon::now()->toDateTimeString());
-        var_dump('Token:', $token);
-
-        
-        $loginResponse->assertStatus(200);
-
-        /*$expiredTime = Carbon::now()->addMinutes(1111440);
-
-        $expiredTime->setTimezone('UTC');
-        Carbon::setTestNow($expiredTime);
-        */
-        //Carbon::setTestNow(now()->addMinutes(111120));
-        $this->travel(111120)->minutes();
-
-        var_dump('Modified time:', Carbon::now()->toDateTimeString());
-
-        $newAttempt = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-            'Accept' => 'application/json',
-        ])->get('/api/auth/something');
-        //$response = $this->get('/api/auth/something');
-
-        var_dump($newAttempt);
-        $newAttempt->assertStatus(401);
-
-        // Reset the test time
-        Carbon::setTestNow();
-    }
-```
 ## Set up PHP CS Fixer
 
 sh in and do the following:

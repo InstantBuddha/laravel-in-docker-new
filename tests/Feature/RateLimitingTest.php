@@ -14,7 +14,7 @@ class RateLimitingTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const BASE_ENDPOINT = '/api/members/';
+    private const BASE_ENDPOINT = '/api/register-new-member';
     private const RATE_LIMIT = 60;
 
     public function test_rate_limit()

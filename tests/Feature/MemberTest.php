@@ -44,7 +44,9 @@ class MemberTest extends TestCase
     {
         $member = Member::factory()->make();
 
-        $response = $this->post(self::BASE_ENDPOINT, $member->toArray())->json('data');
+        $STORE_URL = '/api/register-new-member';
+
+        $response = $this->post($STORE_URL, $member->toArray())->json('data');
         $this->assertNotNull($response['id']);
         $this->assertEquals($member->name, $response['name']);
         $this->assertEquals($member->email, $response['email']);
@@ -72,14 +74,4 @@ class MemberTest extends TestCase
         $this->assertEquals($member->phone_number, $response['phone_number']);
     }
 
-    
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-    }
 }
