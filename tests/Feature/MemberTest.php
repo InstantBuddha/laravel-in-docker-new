@@ -46,13 +46,16 @@ class MemberTest extends TestCase
 
         $STORE_URL = '/api/register-new-member';
 
-        $response = $this->post($STORE_URL, $member->toArray())->json('data');
+        $response = $this->post($STORE_URL, array_filter($member->toArray(), function ($value) {
+            return $value !== null;
+        }))->json('data');
+
         $this->assertNotNull($response['id']);
         $this->assertEquals($member->name, $response['name']);
         $this->assertEquals($member->email, $response['email']);
         $this->assertEquals($member->phone_number, $response['phone_number']);
     }
-    
+
     public function testMember_show(): void
     {
         $user = User::create([

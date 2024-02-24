@@ -20,7 +20,7 @@ The following part of this README contains notes of the steps I took to create t
   - [Creating API endpoint to view members](#creating-api-endpoint-to-view-members)
   - [Adding new members](#adding-new-members)
   - [Volume problem](#volume-problem)
-  - [Create tests](#create-tests)
+  - [Tests](#tests)
   - [Emails: Make:mail](#emails-makemail)
       - [Undo the Mistaken Action:](#undo-the-mistaken-action)
     - [Creating the envelope](#creating-the-envelope)
@@ -335,8 +335,9 @@ SELECT * FROM members;
 
 The problem was solved by creating a Dockerfile and adding docker-php-ext-install pdo pdo_mysql during build.
 
-## Create tests
+## Tests
 
+**Creating tests:**
 First bash in and create MemberTest:
 
 ```sh
@@ -351,7 +352,7 @@ In app\Http\Controllers there is MemberController that has three functions:
 - store(StoreMemberRequest $request)
 We can write test cases for these.
 
-Then run the test:
+**Then run the test:**
 
 ```sh
 docker exec -it laravel-in-docker-new-app-1 sh

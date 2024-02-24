@@ -25,14 +25,19 @@ class RateLimitingTest extends TestCase
 
         for ($i = 1; $i <= self::RATE_LIMIT; $i++) {
             $member = Member::factory()->make();
-            $response = $this->postJson(self::BASE_ENDPOINT, $member->toArray(), $headers);
+
+            $response = $this->postJson(self::BASE_ENDPOINT, array_filter($member->toArray(), function ($value) {
+                return $value !== null;
+            }), $headers);
             $response->assertStatus(201);
             $response->assertHeader('X-Ratelimit-Limit', self::RATE_LIMIT);
             $response->assertHeader('X-Ratelimit-Remaining', self::RATE_LIMIT - $i);
         }
 
         $member = Member::factory()->make();
-        $response = $this->postJson(self::BASE_ENDPOINT, $member->toArray(), $headers);
+        $response = $this->postJson(self::BASE_ENDPOINT, array_filter($member->toArray(), function ($value) {
+            return $value !== null;
+        }), $headers);
         $response->assertStatus(429);
     }
 }
