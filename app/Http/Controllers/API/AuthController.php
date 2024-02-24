@@ -7,7 +7,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -16,29 +16,19 @@ class AuthController extends Controller
         $this->middleware('auth:sanctum', ['except' => ['login']]);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): Response
     {
         $request->validate([
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($request->only('email', 'password'))) {
             $user = Auth::user();
-            return response()->json([
-                'user' => $user,
-                'authorization' => [
-                    'token' => $user->createToken('ApiToken')->plainTextToken,
-                    'type' => 'bearer',
-                ]
-            ]);
+            return response()->json(['token' => $user->createToken('ApiToken')->plainTextToken]);
         }
 
-        return response()->json([
-            'message' => 'Invalid credentials'
-        ], 401);
+        return response(status: Response::HTTP_UNAUTHORIZED);
     }
 
     public function logout(){
@@ -46,10 +36,8 @@ class AuthController extends Controller
         return response()->json(['message' => 'Successfully logged out',]);
     }
 
-    public function something(Request $request)
+    public function authTest(Request $request)
     {
-        return response()->json([
-            'message' => 'Something happened successfully',
-        ]);
+        return response()->json();
     }
 }

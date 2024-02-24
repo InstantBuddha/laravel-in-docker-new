@@ -28,7 +28,7 @@ class ApiAuthTest extends TestCase
 
         $response->assertStatus(200);
 
-        $response = $this->get('/api/auth/something');
+        $response = $this->get('/api/auth/auth_test');
 
         $response->assertStatus(200);
     }
@@ -44,7 +44,7 @@ class ApiAuthTest extends TestCase
 
         $response = $this->withHeaders([
             'Accept' => 'application/json',
-        ])->get('/api/auth/something');
+        ])->get('/api/auth/auth_test');
 
         $response->assertStatus(401);
     }

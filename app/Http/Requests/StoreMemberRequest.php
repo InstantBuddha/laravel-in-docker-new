@@ -22,7 +22,7 @@ class StoreMemberRequest extends FormRequest
             'city' => ['string', 'max:40'],
             'address' => ['string', 'max:80'],
             'comment' => ['string', 'max:250'],
-            'mailing_list' => ['required', 'boolean'],
+            'is_subscribed_to_mailing_list' => ['required', 'boolean'],
         ];
     }
 }

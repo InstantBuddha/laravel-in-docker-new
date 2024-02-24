@@ -14,7 +14,7 @@ class RateLimitingTest extends TestCase
 {
     use RefreshDatabase;
 
-    private const BASE_ENDPOINT = '/api/members/';
+    private const BASE_ENDPOINT = '/api/register-new-member';
     private const RATE_LIMIT = 60;
 
     public function test_rate_limit()
@@ -25,14 +25,19 @@ class RateLimitingTest extends TestCase
 
         for ($i = 1; $i <= self::RATE_LIMIT; $i++) {
             $member = Member::factory()->make();
-            $response = $this->postJson(self::BASE_ENDPOINT, $member->toArray(), $headers);
+
+            $response = $this->postJson(self::BASE_ENDPOINT, array_filter($member->toArray(), function ($value) {
+                return $value !== null;
+            }), $headers);
             $response->assertStatus(201);
             $response->assertHeader('X-Ratelimit-Limit', self::RATE_LIMIT);
             $response->assertHeader('X-Ratelimit-Remaining', self::RATE_LIMIT - $i);
         }
 
         $member = Member::factory()->make();
-        $response = $this->postJson(self::BASE_ENDPOINT, $member->toArray(), $headers);
+        $response = $this->postJson(self::BASE_ENDPOINT, array_filter($member->toArray(), function ($value) {
+            return $value !== null;
+        }), $headers);
         $response->assertStatus(429);
     }
 }

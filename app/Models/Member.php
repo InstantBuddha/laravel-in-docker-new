@@ -20,7 +20,14 @@ class Member extends Model {
         'city',
         'address',
         'comment',
-        'mailing_list',
+        'is_subscribed_to_mailing_list',
+    ];
+
+    protected $casts = [
+        'is_subscribed_to_mailing_list' => 'bool',
+        'email_verified_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected static function booted(): void {
